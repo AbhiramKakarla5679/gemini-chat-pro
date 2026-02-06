@@ -34,8 +34,8 @@ export type ModelOption = {
 };
 
 export const AVAILABLE_MODELS: ModelOption[] = [
-  { id: 'google/gemini-2.5-flash-lite', name: 'Gemini Flash Lite', description: 'Fastest & cheapest model', category: 'gemini' },
   { id: 'google/gemini-3-flash-preview', name: 'Gemini 3 Flash', description: 'Fast and efficient for everyday tasks', category: 'gemini' },
+  { id: 'google/gemini-2.5-flash-lite', name: 'Gemini Flash Lite', description: 'Fastest & cheapest model', category: 'gemini' },
   { id: 'google/gemini-2.5-flash', name: 'Gemini 2.5 Flash', description: 'Balanced speed and capability', category: 'gemini' },
   { id: 'google/gemini-3-pro-preview', name: 'Gemini 3 Pro', description: 'Most capable model for complex tasks', category: 'gemini' },
   { id: 'google/gemini-2.5-pro', name: 'Gemini 2.5 Pro', description: 'Advanced reasoning and multimodal', category: 'gemini' },
@@ -44,4 +44,4 @@ export const AVAILABLE_MODELS: ModelOption[] = [
   { id: 'openai/gpt-5', name: 'GPT-5', description: 'Powerful all-rounder model', category: 'gpt' },
 ];
 
-export const DEFAULT_MODEL = 'google/gemini-2.5-flash-lite';
+export const DEFAULT_MODEL = 'google/gemini-3-flash-preview';
