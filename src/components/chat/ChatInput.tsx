@@ -1,18 +1,25 @@
 import { useState, useRef, useCallback } from 'react';
 import { 
   Send, 
-  Paperclip, 
   X, 
   Globe, 
   Code2, 
-  SlidersHorizontal,
   Plus,
   Atom,
-  Square
+  Lightbulb,
+  Paperclip,
+  Image as ImageIcon,
+  FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FileAttachment, AVAILABLE_MODELS } from '@/types/chat';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface ChatInputProps {
   onSend: (content: string, attachments: FileAttachment[], thinkingMode: boolean) => void;
@@ -21,13 +28,11 @@ interface ChatInputProps {
   onModelChange: (model: string) => void;
 }
 
-type ChatMode = 'research' | 'code' | null;
-
 export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: ChatInputProps) {
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const [reasoningMode, setReasoningMode] = useState(false);
-  const [activeMode, setActiveMode] = useState<ChatMode>(null);
+  const [showWebSearch, setShowWebSearch] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -93,16 +98,18 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
   };
 
   const handleStop = () => {
-    // Would implement abort controller here
+    // Abort controller would be implemented here
   };
+
+  const currentModelInfo = AVAILABLE_MODELS.find(m => m.id === currentModel) || AVAILABLE_MODELS[0];
 
   return (
     <div className="p-4 pb-6">
       <div className="max-w-3xl mx-auto">
-        {/* Main input container - ChatGPT dark style */}
+        {/* Main input container */}
         <div className="relative rounded-3xl bg-[#2f2f2f] border border-[#424242] overflow-hidden">
           
-          {/* Reasoning indicator when active */}
+          {/* Reasoning indicator when loading */}
           {isLoading && reasoningMode && (
             <div className="flex items-center justify-between px-4 py-3 border-b border-[#424242]">
               <div className="flex items-center gap-2 text-[#ececec]">
@@ -126,12 +133,17 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
               {attachments.map((attachment) => (
                 <div
                   key={attachment.id}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#424242] text-sm text-[#ececec]"
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#424242] text-sm text-[#ececec]"
                 >
+                  {attachment.type.startsWith('image/') ? (
+                    <ImageIcon className="h-4 w-4 text-[#8e8e8e]" />
+                  ) : (
+                    <FileText className="h-4 w-4 text-[#8e8e8e]" />
+                  )}
                   <span className="truncate max-w-[150px]">{attachment.name}</span>
                   <button
                     onClick={() => removeAttachment(attachment.id)}
-                    className="hover:text-white"
+                    className="hover:text-white ml-1"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -147,7 +159,6 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
               value={input}
               onChange={(e) => {
                 setInput(e.target.value);
-                // Auto-resize
                 e.target.style.height = 'auto';
                 e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
               }}
@@ -161,51 +172,79 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
 
           {/* Bottom toolbar */}
           <div className="flex items-center justify-between px-3 pb-3">
-            <div className="flex items-center gap-0.5">
-              {/* Plus/Attach button */}
+            <div className="flex items-center gap-1">
+              {/* Attach files */}
               <input
                 ref={fileInputRef}
                 type="file"
                 multiple
-                accept="image/*,.pdf,.txt,.md,.json,.csv,.js,.ts,.py,.html,.css"
+                accept="image/*,.pdf,.txt,.md,.json,.csv,.js,.ts,.tsx,.py,.html,.css,.doc,.docx"
                 className="hidden"
                 onChange={handleFileSelect}
               />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-full text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#424242]"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isLoading}
-              >
-                <Plus className="h-5 w-5" />
-              </Button>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 rounded-full text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#424242]"
+                    disabled={isLoading}
+                  >
+                    <Plus className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="bg-[#2f2f2f] border-[#424242]">
+                  <DropdownMenuItem 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-[#ececec] focus:bg-[#424242] focus:text-[#ececec] cursor-pointer"
+                  >
+                    <Paperclip className="h-4 w-4 mr-2" />
+                    Upload file
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = (e) => handleFileSelect(e as any);
+                      input.click();
+                    }}
+                    className="text-[#ececec] focus:bg-[#424242] focus:text-[#ececec] cursor-pointer"
+                  >
+                    <ImageIcon className="h-4 w-4 mr-2" />
+                    Upload image
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-              {/* Search/Browse web */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-full text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#424242]"
-                disabled={isLoading}
-              >
-                <Globe className="h-5 w-5" />
-              </Button>
-
-              {/* Canvas/Code */}
+              {/* Web search */}
               <Button
                 variant="ghost"
                 size="icon"
                 className={cn(
                   "h-9 w-9 rounded-full hover:bg-[#424242]",
-                  activeMode === 'code' ? "text-[#ececec] bg-[#424242]" : "text-[#b4b4b4] hover:text-[#ececec]"
+                  showWebSearch ? "text-[#ececec] bg-[#424242]" : "text-[#b4b4b4] hover:text-[#ececec]"
                 )}
-                onClick={() => setActiveMode(activeMode === 'code' ? null : 'code')}
+                onClick={() => setShowWebSearch(!showWebSearch)}
                 disabled={isLoading}
+                title="Search the web"
+              >
+                <Globe className="h-5 w-5" />
+              </Button>
+
+              {/* Code mode */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-full text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#424242]"
+                disabled={isLoading}
+                title="Code assistant"
               >
                 <Code2 className="h-5 w-5" />
               </Button>
 
-              {/* Reasoning/Thinking toggle */}
+              {/* Reasoning mode */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -217,23 +256,10 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
                 disabled={isLoading}
                 title="Toggle reasoning mode"
               >
-                <SlidersHorizontal className="h-5 w-5" />
+                <Lightbulb className="h-5 w-5" />
               </Button>
 
               {/* Active mode chips */}
-              {activeMode === 'research' && (
-                <div className="flex items-center gap-1.5 ml-2 px-3 py-1.5 rounded-full bg-[#424242] text-[#ececec] text-sm">
-                  <Atom className="h-4 w-4" />
-                  <span>Research</span>
-                  <button 
-                    onClick={() => setActiveMode(null)}
-                    className="ml-0.5 hover:text-white"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              )}
-
               {reasoningMode && !isLoading && (
                 <div className="flex items-center gap-1.5 ml-2 px-3 py-1.5 rounded-full bg-[#424242] text-[#ececec] text-sm">
                   <Atom className="h-4 w-4" />
@@ -246,9 +272,22 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
                   </button>
                 </div>
               )}
+
+              {showWebSearch && (
+                <div className="flex items-center gap-1.5 ml-2 px-3 py-1.5 rounded-full bg-[#424242] text-[#ececec] text-sm">
+                  <Globe className="h-4 w-4" />
+                  <span>Web</span>
+                  <button 
+                    onClick={() => setShowWebSearch(false)}
+                    className="ml-0.5 hover:text-white"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Send button with gradient */}
+            {/* Send button */}
             <Button
               onClick={handleSubmit}
               disabled={isLoading || (!input.trim() && attachments.length === 0)}
@@ -265,10 +304,38 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
           </div>
         </div>
 
-        {/* Model info text */}
-        <p className="text-center text-xs text-[#8e8e8e] mt-3">
-          ChatGPT can make mistakes. Check important info.
-        </p>
+        {/* Model selector and disclaimer */}
+        <div className="flex items-center justify-between mt-3 px-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className="h-7 px-2 text-xs text-[#8e8e8e] hover:text-[#ececec] hover:bg-transparent"
+              >
+                {currentModelInfo.name}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="bg-[#2f2f2f] border-[#424242] min-w-[200px]">
+              {AVAILABLE_MODELS.map((model) => (
+                <DropdownMenuItem
+                  key={model.id}
+                  onClick={() => onModelChange(model.id)}
+                  className={cn(
+                    "text-[#ececec] focus:bg-[#424242] focus:text-[#ececec] cursor-pointer flex flex-col items-start",
+                    currentModel === model.id && "bg-[#424242]"
+                  )}
+                >
+                  <span className="font-medium">{model.name}</span>
+                  <span className="text-xs text-[#8e8e8e]">{model.description}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <p className="text-xs text-[#8e8e8e]">
+            AI can make mistakes. Verify important info.
+          </p>
+        </div>
       </div>
     </div>
   );

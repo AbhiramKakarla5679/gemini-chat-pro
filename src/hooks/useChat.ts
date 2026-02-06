@@ -134,6 +134,8 @@ export function useChat() {
       let textBuffer = '';
       let fullContent = '';
 
+      let reasoningContent = '';
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -155,29 +157,46 @@ export function useChat() {
           try {
             const parsed = JSON.parse(jsonStr);
             const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            const reasoning = parsed.choices?.[0]?.delta?.reasoning as string | undefined;
+            
+            // Accumulate reasoning content
+            if (reasoning) {
+              reasoningContent += reasoning;
+            }
+            
             if (content) {
               fullContent += content;
-              
-              // Update assistant message with new content
-              setCurrentConversation(prev => {
-                if (!prev) return null;
-                const newMessages = [...prev.messages];
-                const lastIdx = newMessages.length - 1;
-                if (newMessages[lastIdx]?.role === 'assistant') {
-                  newMessages[lastIdx] = {
-                    ...newMessages[lastIdx],
-                    content: fullContent,
-                  };
-                }
-                return { ...prev, messages: newMessages };
-              });
             }
+            
+            // Build display content with thinking tags if there's reasoning
+            const displayContent = reasoningContent 
+              ? `<thinking>${reasoningContent}</thinking>\n\n${fullContent}`
+              : fullContent;
+              
+            // Update assistant message with new content
+            setCurrentConversation(prev => {
+              if (!prev) return null;
+              const newMessages = [...prev.messages];
+              const lastIdx = newMessages.length - 1;
+              if (newMessages[lastIdx]?.role === 'assistant') {
+                newMessages[lastIdx] = {
+                  ...newMessages[lastIdx],
+                  content: displayContent,
+                };
+              }
+              return { ...prev, messages: newMessages };
+            });
           } catch {
             textBuffer = line + '\n' + textBuffer;
             break;
           }
         }
       }
+
+      // Build final content with reasoning
+      const finalContent = reasoningContent 
+        ? `<thinking>${reasoningContent}</thinking>\n\n${fullContent}`
+        : fullContent;
 
       // Finalize the message
       setCurrentConversation(prev => {
@@ -187,7 +206,7 @@ export function useChat() {
         if (newMessages[lastIdx]?.role === 'assistant') {
           newMessages[lastIdx] = {
             ...newMessages[lastIdx],
-            content: fullContent,
+            content: finalContent,
             isStreaming: false,
           };
         }
@@ -199,7 +218,7 @@ export function useChat() {
           if (c.id === conversation!.id) {
             const messages = [...c.messages];
             messages.push(userMessage);
-            messages.push({ ...assistantMessage, content: fullContent, isStreaming: false });
+            messages.push({ ...assistantMessage, content: finalContent, isStreaming: false });
             return { ...c, messages, updatedAt: new Date() };
           }
           return c;
