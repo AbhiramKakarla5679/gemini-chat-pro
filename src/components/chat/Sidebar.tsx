@@ -1,8 +1,15 @@
-import { Plus, MessageSquare, Trash2, Menu, Search, Sparkles, MoreHorizontal, Settings, ExternalLink } from 'lucide-react';
+import { Plus, MessageSquare, Trash2, Menu, Search, MoreHorizontal, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation } from '@/types/chat';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface SidebarProps {
   conversations: Conversation[];
@@ -23,6 +30,8 @@ export function Sidebar({
   isOpen,
   onToggle,
 }: SidebarProps) {
+  const { user, signOut } = useAuth();
+
   const formatDate = (date: Date) => {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -41,6 +50,9 @@ export function Sidebar({
     groups[key].push(conv);
     return groups;
   }, {} as Record<string, Conversation[]>);
+
+  const userInitial = user?.email?.charAt(0).toUpperCase() || 'U';
+  const userEmail = user?.email || 'User';
 
   return (
     <>
@@ -91,7 +103,7 @@ export function Sidebar({
         <ScrollArea className="flex-1 px-2">
           {Object.entries(groupedConversations).map(([group, convs]) => (
             <div key={group} className="mb-4">
-              <h3 className="px-3 py-2 text-xs font-medium text-[#8e8e8e]">
+              <h3 className="px-3 py-2 text-xs font-medium text-[#8e8e8e] font-rounded">
                 {group}
               </h3>
               <div className="space-y-0.5">
@@ -137,7 +149,7 @@ export function Sidebar({
           ))}
           
           {conversations.length === 0 && (
-            <div className="px-3 py-8 text-center text-[#8e8e8e] text-sm">
+            <div className="px-3 py-8 text-center text-[#8e8e8e] text-sm font-rounded">
               No conversations yet
             </div>
           )}
@@ -145,18 +157,31 @@ export function Sidebar({
 
         {/* Footer with user */}
         <div className="p-2 border-t border-[#2f2f2f]">
-          <Button
-            variant="ghost"
-            className="w-full justify-between h-12 px-3 text-[#ececec] hover:bg-[#2f2f2f] rounded-lg group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-sm font-medium text-white">
-                U
-              </div>
-              <span className="text-sm">User</span>
-            </div>
-            <MoreHorizontal className="h-4 w-4 text-[#8e8e8e] opacity-0 group-hover:opacity-100 transition-opacity" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="w-full justify-between h-12 px-3 text-[#ececec] hover:bg-[#2f2f2f] rounded-lg group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-sm font-bold text-white font-display">
+                    {userInitial}
+                  </div>
+                  <span className="text-sm truncate max-w-[140px]">{userEmail}</span>
+                </div>
+                <MoreHorizontal className="h-4 w-4 text-[#8e8e8e] opacity-0 group-hover:opacity-100 transition-opacity" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56 bg-[#2f2f2f] border-[#424242]">
+              <DropdownMenuItem 
+                onClick={() => signOut()}
+                className="text-[#ececec] focus:bg-[#424242] focus:text-[#ececec] cursor-pointer"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </aside>
 
