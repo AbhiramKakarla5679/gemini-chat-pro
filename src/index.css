@@ -2,44 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Outfit:wght@700;800;900&display=swap');
 
-/* SF Pro Display - Bold weights */
-@font-face {
-  font-family: 'SF Pro Display';
-  src: local('SF Pro Display Bold'), local('SFProDisplay-Bold'), local('.SFNSDisplay-Bold');
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'SF Pro Display';
-  src: local('SF Pro Display Heavy'), local('SFProDisplay-Heavy'), local('.SFNSDisplay-Heavy');
-  font-weight: 800;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'SF Pro Display';
-  src: local('SF Pro Display Black'), local('SFProDisplay-Black'), local('.SFNSDisplay-Black');
-  font-weight: 900;
-  font-style: normal;
-}
-
-/* SF Pro Rounded - Bold weights */
-@font-face {
-  font-family: 'SF Pro Rounded';
-  src: local('SF Pro Rounded Bold'), local('SFProRounded-Bold');
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'SF Pro Rounded';
-  src: local('SF Pro Rounded Heavy'), local('SFProRounded-Heavy');
-  font-weight: 800;
-  font-style: normal;
-}
+/* 
+ * Font Strategy:
+ * - Outfit: Bold geometric sans-serif for headings (SF Pro Display alternative)
+ * - Nunito: Rounded, friendly bold font for UI/body (SF Pro Rounded alternative)
+ * Both fonts load from Google Fonts for cross-platform consistency
+ */
 
 @layer base {
   :root {
@@ -99,7 +69,7 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'SF Pro Rounded', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
     font-weight: 700;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
