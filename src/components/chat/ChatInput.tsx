@@ -1,15 +1,13 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect, DragEvent, ClipboardEvent } from 'react';
 import { 
   Send, 
   X, 
   Globe, 
-  Code2, 
-  Plus,
-  Atom,
   Lightbulb,
   Paperclip,
   Image as ImageIcon,
-  FileText
+  FileText,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FileAttachment, AVAILABLE_MODELS } from '@/types/chat';
@@ -22,7 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 interface ChatInputProps {
-  onSend: (content: string, attachments: FileAttachment[], thinkingMode: boolean) => void;
+  onSend: (content: string, attachments: FileAttachment[], thinkingMode: boolean, webSearch: boolean) => void;
   isLoading: boolean;
   currentModel: string;
   onModelChange: (model: string) => void;
@@ -31,19 +29,21 @@ interface ChatInputProps {
 export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: ChatInputProps) {
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
-  const [reasoningMode, setReasoningMode] = useState(false);
-  const [showWebSearch, setShowWebSearch] = useState(false);
+  const [thinkingMode, setThinkingMode] = useState(false);
+  const [webSearch, setWebSearch] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = useCallback(() => {
     if (!input.trim() && attachments.length === 0) return;
     if (isLoading) return;
     
-    onSend(input, attachments, reasoningMode);
+    onSend(input, attachments, thinkingMode, webSearch);
     setInput('');
     setAttachments([]);
-  }, [input, attachments, reasoningMode, isLoading, onSend]);
+  }, [input, attachments, thinkingMode, webSearch, isLoading, onSend]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -52,13 +52,20 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
     }
   };
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
+  const readFileAsBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
 
+  const processFiles = async (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
     const newAttachments: FileAttachment[] = [];
     
-    for (const file of Array.from(files)) {
+    for (const file of fileArray) {
       if (file.type.startsWith('image/')) {
         const base64 = await readFileAsBase64(file);
         newAttachments.push({
@@ -79,26 +86,108 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
     }
 
     setAttachments(prev => [...prev, ...newAttachments]);
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    await processFiles(files);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
-  const readFileAsBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
+  // Handle paste events
+  const handlePaste = useCallback(async (e: ClipboardEvent<HTMLDivElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    const imageItems: File[] = [];
+    
+    for (const item of Array.from(items)) {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) {
+          imageItems.push(file);
+        }
+      }
+    }
+
+    if (imageItems.length > 0) {
+      e.preventDefault();
+      await processFiles(imageItems);
+    }
+  }, []);
+
+  // Drag and drop handlers
+  const handleDragEnter = useCallback((e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Only set dragging to false if we're leaving the container
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (rect) {
+      const { clientX, clientY } = e;
+      if (
+        clientX < rect.left ||
+        clientX > rect.right ||
+        clientY < rect.top ||
+        clientY > rect.bottom
+      ) {
+        setIsDragging(false);
+      }
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback(async (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      await processFiles(files);
+    }
+  }, []);
+
+  // Global paste listener for images when input is focused
+  useEffect(() => {
+    const handleGlobalPaste = async (e: globalThis.ClipboardEvent) => {
+      // Only handle if our textarea is focused or the container
+      if (!containerRef.current?.contains(document.activeElement)) return;
+      
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (const item of Array.from(items)) {
+        if (item.type.startsWith('image/')) {
+          e.preventDefault();
+          const file = item.getAsFile();
+          if (file) {
+            await processFiles([file]);
+          }
+          break;
+        }
+      }
+    };
+
+    document.addEventListener('paste', handleGlobalPaste);
+    return () => document.removeEventListener('paste', handleGlobalPaste);
+  }, []);
 
   const removeAttachment = (id: string) => {
     setAttachments(prev => prev.filter(a => a.id !== id));
-  };
-
-  const handleStop = () => {
-    // Abort controller would be implemented here
   };
 
   const currentModelInfo = AVAILABLE_MODELS.find(m => m.id === currentModel) || AVAILABLE_MODELS[0];
@@ -107,23 +196,39 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
     <div className="p-4 pb-6">
       <div className="max-w-3xl mx-auto">
         {/* Main input container */}
-        <div className="relative rounded-3xl bg-[#2f2f2f] border border-[#424242] overflow-hidden">
-          
-          {/* Reasoning indicator when loading */}
-          {isLoading && reasoningMode && (
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#424242]">
-              <div className="flex items-center gap-2 text-[#ececec]">
-                <Atom className="h-5 w-5 animate-pulse" />
-                <span className="text-sm font-medium">Reasoning...</span>
+        <div 
+          ref={containerRef}
+          className={cn(
+            "relative rounded-2xl bg-card border transition-all duration-200",
+            isDragging 
+              ? "border-accent border-dashed bg-accent/5" 
+              : "border-border"
+          )}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onPaste={handlePaste}
+        >
+          {/* Drag overlay */}
+          {isDragging && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-accent/10 border-2 border-dashed border-accent">
+              <div className="text-center">
+                <ImageIcon className="w-8 h-8 mx-auto mb-2 text-accent" />
+                <p className="text-sm font-bold text-accent">Drop files here</p>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleStop}
-                className="h-7 px-3 text-xs bg-[#424242] hover:bg-[#525252] text-[#ececec] rounded-full"
-              >
-                Stop
-              </Button>
+            </div>
+          )}
+
+          {/* Loading indicator */}
+          {isLoading && (thinkingMode || webSearch) && (
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-sm font-bold">
+                  {thinkingMode ? 'Thinking...' : 'Searching...'}
+                </span>
+              </div>
             </div>
           )}
 
@@ -133,20 +238,34 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
               {attachments.map((attachment) => (
                 <div
                   key={attachment.id}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#424242] text-sm text-[#ececec]"
+                  className="relative group"
                 >
-                  {attachment.type.startsWith('image/') ? (
-                    <ImageIcon className="h-4 w-4 text-[#8e8e8e]" />
+                  {attachment.type.startsWith('image/') && attachment.base64 ? (
+                    <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-border">
+                      <img 
+                        src={attachment.base64} 
+                        alt={attachment.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        onClick={() => removeAttachment(attachment.id)}
+                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-3 w-3 text-white" />
+                      </button>
+                    </div>
                   ) : (
-                    <FileText className="h-4 w-4 text-[#8e8e8e]" />
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-secondary text-sm">
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                      <span className="truncate max-w-[120px]">{attachment.name}</span>
+                      <button
+                        onClick={() => removeAttachment(attachment.id)}
+                        className="hover:text-foreground"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   )}
-                  <span className="truncate max-w-[150px]">{attachment.name}</span>
-                  <button
-                    onClick={() => removeAttachment(attachment.id)}
-                    className="hover:text-white ml-1"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
                 </div>
               ))}
             </div>
@@ -163,9 +282,9 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
                 e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
               }}
               onKeyDown={handleKeyDown}
-              placeholder="Ask anything"
+              placeholder="Ask anything..."
               disabled={isLoading}
-              className="w-full bg-transparent text-[#ececec] placeholder:text-[#8e8e8e] resize-none outline-none text-base leading-relaxed min-h-[24px] max-h-[200px]"
+              className="w-full bg-transparent text-foreground placeholder:text-muted-foreground resize-none outline-none text-base leading-relaxed min-h-[24px] max-h-[200px]"
               rows={1}
             />
           </div>
@@ -188,16 +307,16 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 rounded-full text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#424242]"
+                    className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary"
                     disabled={isLoading}
                   >
-                    <Plus className="h-5 w-5" />
+                    <Paperclip className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="bg-[#2f2f2f] border-[#424242]">
+                <DropdownMenuContent align="start" className="bg-card border-border">
                   <DropdownMenuItem 
                     onClick={() => fileInputRef.current?.click()}
-                    className="text-[#ececec] focus:bg-[#424242] focus:text-[#ececec] cursor-pointer"
+                    className="cursor-pointer"
                   >
                     <Paperclip className="h-4 w-4 mr-2" />
                     Upload file
@@ -207,10 +326,11 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
                       const input = document.createElement('input');
                       input.type = 'file';
                       input.accept = 'image/*';
+                      input.multiple = true;
                       input.onchange = (e) => handleFileSelect(e as any);
                       input.click();
                     }}
-                    className="text-[#ececec] focus:bg-[#424242] focus:text-[#ececec] cursor-pointer"
+                    className="cursor-pointer"
                   >
                     <ImageIcon className="h-4 w-4 mr-2" />
                     Upload image
@@ -223,65 +343,54 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "h-9 w-9 rounded-full hover:bg-[#424242]",
-                  showWebSearch ? "text-[#ececec] bg-[#424242]" : "text-[#b4b4b4] hover:text-[#ececec]"
+                  "h-9 w-9 rounded-full hover:bg-secondary",
+                  webSearch ? "text-accent bg-accent/10" : "text-muted-foreground hover:text-foreground"
                 )}
-                onClick={() => setShowWebSearch(!showWebSearch)}
+                onClick={() => setWebSearch(!webSearch)}
                 disabled={isLoading}
                 title="Search the web"
               >
                 <Globe className="h-5 w-5" />
               </Button>
 
-              {/* Code mode */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-full text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#424242]"
-                disabled={isLoading}
-                title="Code assistant"
-              >
-                <Code2 className="h-5 w-5" />
-              </Button>
-
-              {/* Reasoning mode */}
+              {/* Thinking mode */}
               <Button
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "h-9 w-9 rounded-full hover:bg-[#424242]",
-                  reasoningMode ? "text-[#ececec] bg-[#424242]" : "text-[#b4b4b4] hover:text-[#ececec]"
+                  "h-9 w-9 rounded-full hover:bg-secondary",
+                  thinkingMode ? "text-accent bg-accent/10" : "text-muted-foreground hover:text-foreground"
                 )}
-                onClick={() => setReasoningMode(!reasoningMode)}
+                onClick={() => setThinkingMode(!thinkingMode)}
                 disabled={isLoading}
-                title="Toggle reasoning mode"
+                title="Enable deep thinking"
               >
                 <Lightbulb className="h-5 w-5" />
               </Button>
 
               {/* Active mode chips */}
-              {reasoningMode && !isLoading && (
-                <div className="flex items-center gap-1.5 ml-2 px-3 py-1.5 rounded-full bg-[#424242] text-[#ececec] text-sm">
-                  <Atom className="h-4 w-4" />
-                  <span>Reasoning</span>
+              {thinkingMode && !isLoading && (
+                <div className="flex items-center gap-1.5 ml-1 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-bold">
+                  <Lightbulb className="h-3.5 w-3.5" />
+                  <span>Think</span>
                   <button 
-                    onClick={() => setReasoningMode(false)}
-                    className="ml-0.5 hover:text-white"
+                    onClick={() => setThinkingMode(false)}
+                    className="ml-0.5"
                   >
-                    <X className="h-3.5 w-3.5" />
+                    <X className="h-3 w-3" />
                   </button>
                 </div>
               )}
 
-              {showWebSearch && (
-                <div className="flex items-center gap-1.5 ml-2 px-3 py-1.5 rounded-full bg-[#424242] text-[#ececec] text-sm">
-                  <Globe className="h-4 w-4" />
+              {webSearch && !isLoading && (
+                <div className="flex items-center gap-1.5 ml-1 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-bold">
+                  <Globe className="h-3.5 w-3.5" />
                   <span>Web</span>
                   <button 
-                    onClick={() => setShowWebSearch(false)}
-                    className="ml-0.5 hover:text-white"
+                    onClick={() => setWebSearch(false)}
+                    className="ml-0.5"
                   >
-                    <X className="h-3.5 w-3.5" />
+                    <X className="h-3 w-3" />
                   </button>
                 </div>
               )}
@@ -293,13 +402,17 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
               disabled={isLoading || (!input.trim() && attachments.length === 0)}
               size="icon"
               className={cn(
-                "h-9 w-9 rounded-full transition-all",
+                "h-9 w-9 rounded-full transition-all duration-200",
                 (input.trim() || attachments.length > 0) && !isLoading
-                  ? "bg-gradient-to-r from-[#ab68ff] via-[#ff7eb3] to-[#ff9f68] hover:opacity-90"
-                  : "bg-[#676767] text-[#b4b4b4]"
+                  ? "bg-accent hover:bg-accent/90 text-accent-foreground"
+                  : "bg-muted text-muted-foreground"
               )}
             >
-              <Send className="h-4 w-4 text-white" />
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </div>
@@ -310,29 +423,29 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className="h-7 px-2 text-xs text-[#8e8e8e] hover:text-[#ececec] hover:bg-transparent"
+                className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground hover:bg-transparent"
               >
                 {currentModelInfo.name}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="bg-[#2f2f2f] border-[#424242] min-w-[200px]">
+            <DropdownMenuContent align="start" className="bg-card border-border min-w-[200px]">
               {AVAILABLE_MODELS.map((model) => (
                 <DropdownMenuItem
                   key={model.id}
                   onClick={() => onModelChange(model.id)}
                   className={cn(
-                    "text-[#ececec] focus:bg-[#424242] focus:text-[#ececec] cursor-pointer flex flex-col items-start",
-                    currentModel === model.id && "bg-[#424242]"
+                    "cursor-pointer flex flex-col items-start",
+                    currentModel === model.id && "bg-secondary"
                   )}
                 >
-                  <span className="font-medium">{model.name}</span>
-                  <span className="text-xs text-[#8e8e8e]">{model.description}</span>
+                  <span className="font-bold">{model.name}</span>
+                  <span className="text-xs text-muted-foreground">{model.description}</span>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <p className="text-xs text-[#8e8e8e]">
+          <p className="text-xs text-muted-foreground">
             AI can make mistakes. Verify important info.
           </p>
         </div>

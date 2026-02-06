@@ -12,6 +12,7 @@ interface DbConversation {
   model: string;
   created_at: string;
   updated_at: string;
+  user_id: string;
 }
 
 interface DbMessage {
@@ -45,14 +46,23 @@ export function useChat() {
       return;
     }
 
+    setIsLoadingConversations(true);
+    
     try {
-      const { data, error } = await supabase
+      console.log('Loading conversations for user:', user.id);
+      
+      const { data, error: fetchError } = await supabase
         .from('conversations')
         .select('*')
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false });
 
-      if (error) throw error;
+      if (fetchError) {
+        console.error('Error fetching conversations:', fetchError);
+        throw fetchError;
+      }
+
+      console.log('Loaded conversations:', data?.length || 0);
 
       const convs: Conversation[] = (data || []).map((c: DbConversation) => ({
         id: c.id,
@@ -66,21 +76,29 @@ export function useChat() {
       setConversations(convs);
     } catch (err) {
       console.error('Error loading conversations:', err);
+      setError('Failed to load conversations');
     } finally {
       setIsLoadingConversations(false);
     }
   }, [user]);
 
   // Load messages for a conversation
-  const loadMessages = useCallback(async (conversationId: string) => {
+  const loadMessages = useCallback(async (conversationId: string): Promise<Message[]> => {
     try {
-      const { data, error } = await supabase
+      console.log('Loading messages for conversation:', conversationId);
+      
+      const { data, error: fetchError } = await supabase
         .from('messages')
         .select('*')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (fetchError) {
+        console.error('Error fetching messages:', fetchError);
+        throw fetchError;
+      }
+
+      console.log('Loaded messages:', data?.length || 0);
 
       const messages: Message[] = (data || []).map((m: DbMessage) => ({
         id: m.id,
@@ -97,15 +115,27 @@ export function useChat() {
     }
   }, []);
 
+  // Load conversations when user changes
   useEffect(() => {
-    loadConversations();
-  }, [loadConversations]);
+    if (user) {
+      loadConversations();
+    } else {
+      setConversations([]);
+      setCurrentConversation(null);
+      setIsLoadingConversations(false);
+    }
+  }, [user, loadConversations]);
 
   const createNewConversation = useCallback(async (model: string = 'google/gemini-3-pro-preview') => {
-    if (!user) return null;
+    if (!user) {
+      console.error('Cannot create conversation: no user');
+      return null;
+    }
 
     try {
-      const { data, error } = await supabase
+      console.log('Creating new conversation for user:', user.id);
+      
+      const { data, error: insertError } = await supabase
         .from('conversations')
         .insert({
           user_id: user.id,
@@ -115,7 +145,12 @@ export function useChat() {
         .select()
         .single();
 
-      if (error) throw error;
+      if (insertError) {
+        console.error('Error creating conversation:', insertError);
+        throw insertError;
+      }
+
+      console.log('Created conversation:', data.id);
 
       const newConversation: Conversation = {
         id: data.id,
@@ -137,12 +172,12 @@ export function useChat() {
   }, [user]);
 
   const updateConversationTitle = useCallback(async (id: string, firstMessage: string) => {
-    const title = firstMessage.slice(0, 30) + (firstMessage.length > 30 ? '...' : '');
+    const title = firstMessage.slice(0, 40) + (firstMessage.length > 40 ? '...' : '');
     
     try {
       await supabase
         .from('conversations')
-        .update({ title })
+        .update({ title, updated_at: new Date().toISOString() })
         .eq('id', id);
 
       setConversations(prev => 
@@ -159,7 +194,8 @@ export function useChat() {
   const sendMessage = useCallback(async (
     content: string,
     attachments: FileAttachment[] = [],
-    thinkingMode: boolean = false
+    thinkingMode: boolean = false,
+    webSearch: boolean = false
   ) => {
     if (!content.trim() && attachments.length === 0) return;
     if (!user || !session) {
@@ -255,6 +291,7 @@ export function useChat() {
           messages: apiMessages,
           model: conversation.model,
           thinkingMode,
+          webSearch,
         }),
       });
 
@@ -321,8 +358,7 @@ export function useChat() {
               return { ...prev, messages: newMessages };
             });
           } catch {
-            textBuffer = line + '\n' + textBuffer;
-            break;
+            // JSON parse error, continue
           }
         }
       }
@@ -353,20 +389,19 @@ export function useChat() {
           role: 'assistant',
           content: finalContent,
         });
+        
+        // Update conversation timestamp
+        await supabase
+          .from('conversations')
+          .update({ updated_at: new Date().toISOString() })
+          .eq('id', conversation.id);
       } catch (err) {
         console.error('Error saving assistant message:', err);
       }
 
+      // Update conversations list
       setConversations(prev => 
-        prev.map(c => {
-          if (c.id === conversation!.id) {
-            const messages = [...c.messages];
-            messages.push(userMessage);
-            messages.push({ ...assistantMessage, content: finalContent, isStreaming: false });
-            return { ...c, messages, updatedAt: new Date() };
-          }
-          return c;
-        })
+        prev.map(c => c.id === conversation!.id ? { ...c, updatedAt: new Date() } : c)
       );
 
     } catch (err) {
@@ -386,23 +421,24 @@ export function useChat() {
   const selectConversation = useCallback(async (id: string) => {
     const conversation = conversations.find(c => c.id === id);
     if (conversation) {
-      // Load messages if not already loaded
-      if (conversation.messages.length === 0) {
-        const messages = await loadMessages(id);
-        const updatedConversation = { ...conversation, messages };
-        setCurrentConversation(updatedConversation);
-        setConversations(prev => 
-          prev.map(c => c.id === id ? updatedConversation : c)
-        );
-      } else {
-        setCurrentConversation(conversation);
-      }
+      // Always load messages fresh from database
+      const messages = await loadMessages(id);
+      const updatedConversation = { ...conversation, messages };
+      setCurrentConversation(updatedConversation);
+      
+      // Update local state with loaded messages
+      setConversations(prev => 
+        prev.map(c => c.id === id ? updatedConversation : c)
+      );
     }
   }, [conversations, loadMessages]);
 
   const deleteConversation = useCallback(async (id: string) => {
     try {
+      // Delete messages first (foreign key constraint)
+      await supabase.from('messages').delete().eq('conversation_id', id);
       await supabase.from('conversations').delete().eq('id', id);
+      
       setConversations(prev => prev.filter(c => c.id !== id));
       if (currentConversation?.id === id) {
         setCurrentConversation(null);
@@ -431,6 +467,10 @@ export function useChat() {
     }
   }, [currentConversation]);
 
+  const clearCurrentConversation = useCallback(() => {
+    setCurrentConversation(null);
+  }, []);
+
   return {
     conversations,
     currentConversation,
@@ -442,5 +482,7 @@ export function useChat() {
     selectConversation,
     deleteConversation,
     updateModel,
+    clearCurrentConversation,
+    refreshConversations: loadConversations,
   };
 }
