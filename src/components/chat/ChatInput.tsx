@@ -122,26 +122,10 @@ export function ChatInput({
     }
   };
 
-  // Handle paste events
+  // Handle paste events - removed to prevent duplicate with global paste listener
   const handlePaste = useCallback(async (e: ClipboardEvent<HTMLDivElement>) => {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-
-    const imageItems: File[] = [];
-    
-    for (const item of Array.from(items)) {
-      if (item.type.startsWith('image/')) {
-        const file = item.getAsFile();
-        if (file) {
-          imageItems.push(file);
-        }
-      }
-    }
-
-    if (imageItems.length > 0) {
-      e.preventDefault();
-      await processFiles(imageItems);
-    }
+    // Do nothing here - handled by global paste listener in useEffect below
+    // This prevents duplicate file additions
   }, []);
 
   // Drag and drop handlers

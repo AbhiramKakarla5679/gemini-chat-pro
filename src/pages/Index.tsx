@@ -15,6 +15,8 @@ const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [droppedFiles, setDroppedFiles] = useState<File[]>([]);
+  const [activeThinkingMode, setActiveThinkingMode] = useState(false);
+  const [activeWebSearch, setActiveWebSearch] = useState(false);
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -171,10 +173,16 @@ const Index = () => {
         <MessageList
           messages={currentConversation?.messages || []}
           isLoading={isLoading}
+          thinkingMode={activeThinkingMode}
+          webSearch={activeWebSearch}
         />
 
         <ChatInput
-          onSend={sendMessage}
+          onSend={(content, attachments, thinkingMode, webSearch, context) => {
+            setActiveThinkingMode(thinkingMode);
+            setActiveWebSearch(webSearch);
+            sendMessage(content, attachments, thinkingMode, webSearch);
+          }}
           isLoading={isLoading}
           currentModel={currentConversation?.model || DEFAULT_MODEL}
           onModelChange={updateModel}
