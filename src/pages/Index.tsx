@@ -6,7 +6,7 @@ import { useChat } from '@/hooks/useChat';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -49,7 +49,7 @@ const Index = () => {
       <main className="flex-1 flex flex-col min-w-0 bg-[#212121]">
         {/* Header when sidebar is closed */}
         {!sidebarOpen && (
-          <div className="flex items-center gap-2 p-2 md:p-3">
+          <div className="flex items-center gap-2 p-3">
             <Button
               variant="ghost"
               size="icon"
@@ -57,6 +57,14 @@ const Index = () => {
               className="h-10 w-10 rounded-lg text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#2f2f2f]"
             >
               <Menu className="h-5 w-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleNewChat}
+              className="h-10 w-10 rounded-lg text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+            >
+              <Plus className="h-5 w-5" />
             </Button>
           </div>
         )}

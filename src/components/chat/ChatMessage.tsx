@@ -11,7 +11,6 @@ import {
   ThumbsDown,
   RotateCcw,
   Volume2,
-  Share,
   MoreHorizontal,
   Sparkles
 } from 'lucide-react';
@@ -27,6 +26,7 @@ interface ChatMessageProps {
 export function ChatMessage({ message, isLatest }: ChatMessageProps) {
   const [copied, setCopied] = useState(false);
   const [showThinking, setShowThinking] = useState(true);
+  const [liked, setLiked] = useState<boolean | null>(null);
 
   const isUser = message.role === 'user';
 
@@ -38,7 +38,7 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
     : message.content;
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(message.content);
+    await navigator.clipboard.writeText(mainContent);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -53,11 +53,22 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
               {message.attachments.map((attachment) => (
                 <div key={attachment.id} className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-[#2f2f2f] text-sm text-[#ececec]">
                   {attachment.type.startsWith('image/') ? (
-                    <ImageIcon className="w-4 h-4 text-[#8e8e8e]" />
+                    <>
+                      <ImageIcon className="w-4 h-4 text-[#8e8e8e]" />
+                      {attachment.base64 && (
+                        <img 
+                          src={attachment.base64} 
+                          alt={attachment.name}
+                          className="max-w-[200px] max-h-[150px] rounded-lg object-cover"
+                        />
+                      )}
+                    </>
                   ) : (
-                    <FileText className="w-4 h-4 text-[#8e8e8e]" />
+                    <>
+                      <FileText className="w-4 h-4 text-[#8e8e8e]" />
+                      <span className="truncate max-w-[200px]">{attachment.name}</span>
+                    </>
                   )}
-                  <span className="truncate max-w-[200px]">{attachment.name}</span>
                 </div>
               ))}
             </div>
@@ -110,15 +121,21 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
           {/* Main content */}
           <div className={cn(
             "prose prose-invert prose-sm max-w-none",
-            "[&_p]:text-[#ececec] [&_p]:leading-relaxed",
-            "[&_code]:bg-[#1e1e1e] [&_code]:text-[#e06c75] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded",
-            "[&_pre]:bg-[#1e1e1e] [&_pre]:rounded-xl [&_pre]:p-4",
-            "[&_pre_code]:bg-transparent [&_pre_code]:p-0",
-            "[&_ul]:text-[#ececec] [&_ol]:text-[#ececec]",
-            "[&_li]:text-[#ececec]",
-            "[&_strong]:text-[#ececec]",
+            "[&_p]:text-[#ececec] [&_p]:leading-relaxed [&_p]:mb-4",
+            "[&_code]:bg-[#1e1e1e] [&_code]:text-[#e06c75] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm",
+            "[&_pre]:bg-[#1e1e1e] [&_pre]:rounded-xl [&_pre]:p-4 [&_pre]:my-4",
+            "[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-[#ececec]",
+            "[&_ul]:text-[#ececec] [&_ol]:text-[#ececec] [&_ul]:my-4 [&_ol]:my-4",
+            "[&_li]:text-[#ececec] [&_li]:my-1",
+            "[&_strong]:text-[#ececec] [&_strong]:font-semibold",
             "[&_h1]:text-[#ececec] [&_h2]:text-[#ececec] [&_h3]:text-[#ececec]",
+            "[&_h1]:text-xl [&_h2]:text-lg [&_h3]:text-base",
+            "[&_h1]:font-semibold [&_h2]:font-semibold [&_h3]:font-medium",
+            "[&_h1]:mt-6 [&_h2]:mt-5 [&_h3]:mt-4",
+            "[&_h1]:mb-3 [&_h2]:mb-2 [&_h3]:mb-2",
             "[&_a]:text-[#7ab7ff] [&_a]:no-underline hover:[&_a]:underline",
+            "[&_blockquote]:border-l-2 [&_blockquote]:border-[#424242] [&_blockquote]:pl-4 [&_blockquote]:text-[#b4b4b4]",
+            "[&_hr]:border-[#424242] [&_hr]:my-6",
             message.isStreaming && isLatest && "streaming-cursor"
           )}>
             <ReactMarkdown
@@ -138,20 +155,20 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
                   return (
                     <div className="relative group my-4">
                       {match && (
-                        <div className="flex items-center justify-between px-4 py-2 bg-[#2d2d2d] rounded-t-xl border-b border-[#424242]">
-                          <span className="text-xs text-[#8e8e8e]">{match[1]}</span>
+                        <div className="flex items-center justify-between px-4 py-2 bg-[#2d2d2d] rounded-t-xl border-b border-[#3d3d3d]">
+                          <span className="text-xs text-[#8e8e8e] font-medium">{match[1]}</span>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 px-2 text-xs text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#424242]"
+                            className="h-7 px-2 text-xs text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#424242] rounded"
                             onClick={() => navigator.clipboard.writeText(String(children))}
                           >
-                            <Copy className="h-3.5 w-3.5 mr-1" />
+                            <Copy className="h-3.5 w-3.5 mr-1.5" />
                             Copy
                           </Button>
                         </div>
                       )}
-                      <pre className={cn(className, match && "!rounded-t-none !mt-0")}>
+                      <pre className={cn("!rounded-t-none !mt-0", className)}>
                         <code {...props}>{children}</code>
                       </pre>
                     </div>
@@ -165,15 +182,16 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
 
           {/* Actions toolbar */}
           {!message.isStreaming && (
-            <div className="flex items-center gap-0.5 mt-3">
+            <div className="flex items-center gap-0.5 mt-4">
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
                 onClick={handleCopy}
+                title="Copy"
               >
                 {copied ? (
-                  <Check className="h-4 w-4" />
+                  <Check className="h-4 w-4 text-green-400" />
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
@@ -182,20 +200,31 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+                title="Read aloud"
               >
                 <Volume2 className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+                className={cn(
+                  "h-8 w-8 rounded-lg hover:bg-[#2f2f2f]",
+                  liked === true ? "text-green-400" : "text-[#8e8e8e] hover:text-[#ececec]"
+                )}
+                onClick={() => setLiked(liked === true ? null : true)}
+                title="Good response"
               >
                 <ThumbsUp className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+                className={cn(
+                  "h-8 w-8 rounded-lg hover:bg-[#2f2f2f]",
+                  liked === false ? "text-red-400" : "text-[#8e8e8e] hover:text-[#ececec]"
+                )}
+                onClick={() => setLiked(liked === false ? null : false)}
+                title="Bad response"
               >
                 <ThumbsDown className="h-4 w-4" />
               </Button>
@@ -203,6 +232,7 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+                title="Regenerate"
               >
                 <RotateCcw className="h-4 w-4" />
               </Button>
@@ -210,6 +240,7 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+                title="More"
               >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
