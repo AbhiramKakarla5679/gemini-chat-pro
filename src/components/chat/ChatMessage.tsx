@@ -17,9 +17,11 @@ import ReactMarkdown from 'react-markdown';
 interface ChatMessageProps {
   message: Message;
   isLatest?: boolean;
+  thinkingMode?: boolean;
+  webSearch?: boolean;
 }
 
-export function ChatMessage({ message, isLatest }: ChatMessageProps) {
+export function ChatMessage({ message, isLatest, thinkingMode, webSearch }: ChatMessageProps) {
   const [copied, setCopied] = useState(false);
   const [showThinking, setShowThinking] = useState(false);
   const [liked, setLiked] = useState<boolean | null>(null);
@@ -75,16 +77,34 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
   }
 
   // Assistant message
+  const isWaitingForFirstToken = message.isStreaming && !mainContent.trim() && !thinkingContent;
+
   return (
     <div className="mb-5 message-appear">
       <div className="flex gap-4">
-        {/* Avatar - gradient accent */}
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shrink-0 shadow-md shadow-accent/20">
-          <Sparkles className="w-4 h-4 text-accent-foreground" />
-        </div>
+        {/* Avatar - gradient accent or gemini spinner */}
+        {isWaitingForFirstToken && !thinkingMode && !webSearch ? (
+          <div className="w-8 h-8 flex items-center justify-center shrink-0">
+            <div className="gemini-spinner-sm" />
+          </div>
+        ) : (
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shrink-0 shadow-md shadow-accent/20">
+            <Sparkles className={cn("w-4 h-4 text-accent-foreground", isWaitingForFirstToken && "reasoning-sparkle")} />
+          </div>
+        )}
 
         {/* Content */}
         <div className="flex-1 min-w-0 pt-0.5">
+          {/* Waiting for first token - show reasoning/searching text */}
+          {isWaitingForFirstToken && (thinkingMode || webSearch) && (
+            <div className="flex items-center gap-2 pt-1">
+              <span className="text-sm font-rounded font-bold text-muted-foreground">
+                {thinkingMode ? 'Reasoning through your question...' : 'Searching the web...'}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+            </div>
+          )}
+
           {/* Thinking section - glass card */}
           {thinkingContent && (
             <div className="mb-4">
