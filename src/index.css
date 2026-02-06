@@ -202,6 +202,45 @@
       0 0 100px -20px hsl(var(--accent) / 0.2);
   }
 
+  /* Gemini-style colorful spinner */
+  .gemini-spinner {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #ea4335;
+    border-right-color: #fbbc04;
+    border-bottom-color: #34a853;
+    border-left-color: #4285f4;
+    animation: geminiSpin 0.8s linear infinite;
+  }
+
+  .gemini-spinner-sm {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2.5px solid transparent;
+    border-top-color: #ea4335;
+    border-right-color: #fbbc04;
+    border-bottom-color: #34a853;
+    border-left-color: #4285f4;
+    animation: geminiSpin 0.8s linear infinite;
+  }
+
+  @keyframes geminiSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Reasoning indicator animation */
+  .reasoning-sparkle {
+    animation: sparkleRotate 2s ease-in-out infinite;
+  }
+
+  @keyframes sparkleRotate {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+  }
+
   .liquid-text {
     background: linear-gradient(
       135deg,
