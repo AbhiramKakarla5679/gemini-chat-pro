@@ -118,13 +118,13 @@ const Auth = () => {
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                 <GraduationCap className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold">Save My Exams</span>
+              <span className="text-2xl font-bold font-display">SaveMyExams Tutor</span>
             </div>
-            <h1 className="text-3xl font-bold mb-2">
+            <h1 className="text-3xl font-bold mb-2 font-display">
               {isLogin ? 'Welcome back' : 'Create account'}
             </h1>
-            <p className="text-white/50">
-              {isLogin ? 'Sign in to continue to AI Chat' : 'Get started with your study companion'}
+            <p className="text-white/50 font-rounded">
+              {isLogin ? 'Sign in to continue to your AI Tutor' : 'Get started with your study companion'}
             </p>
           </div>
 

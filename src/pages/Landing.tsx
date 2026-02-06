@@ -72,19 +72,19 @@ const Landing = () => {
             </div>
 
             {/* Main Title */}
-            <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tight animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tight animate-fade-in font-display" style={{ animationDelay: '0.1s' }}>
               <span className="bg-gradient-to-r from-white via-white to-white/60 bg-clip-text text-transparent">
-                Save My
+                SaveMyExams
               </span>
               <br />
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent">
-                Exams
+                Tutor
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-white/50 mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              The AI-powered study companion that helps you ace your exams with personalized learning and smart revision.
+            <p className="text-xl md:text-2xl text-white/50 mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-in font-rounded" style={{ animationDelay: '0.2s' }}>
+              Your AI-powered study companion that helps you ace your exams with personalized tutoring and smart revision.
             </p>
 
             {/* CTA Buttons */}
@@ -168,9 +168,9 @@ const Landing = () => {
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2">
               <GraduationCap className="w-5 h-5 text-purple-400" />
-              <span className="font-semibold text-white/80">Save My Exams</span>
+              <span className="font-semibold text-white/80 font-display">SaveMyExams Tutor</span>
             </div>
-            <p className="text-sm text-white/30">© 2024 Save My Exams. All rights reserved.</p>
+            <p className="text-sm text-white/30">© 2024 SaveMyExams Tutor. All rights reserved.</p>
           </div>
         </footer>
       </div>
