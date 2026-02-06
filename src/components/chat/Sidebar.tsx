@@ -69,7 +69,7 @@ export function Sidebar({
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shadow-md shadow-accent/20">
               <Sparkles className="w-4 h-4 text-accent-foreground" />
             </div>
-            <span className="font-bold text-sm">Assistant</span>
+            <span className="font-bold text-sm">SaveMyExams</span>
           </div>
           
           <div className="flex items-center gap-1">
