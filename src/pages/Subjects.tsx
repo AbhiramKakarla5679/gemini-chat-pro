@@ -88,17 +88,7 @@ const Subjects = () => {
     }
   }, [user, isLoading, navigate]);
 
-  const handleSubjectAction = (subject: typeof subjects[0], mode: StudyMode) => {
-    navigate('/chat', { 
-      state: { 
-        prefill: `${mode.name} for ${subject.name}: Give me comprehensive ${mode.id === 'revision' ? 'revision notes' : mode.id === 'practice' ? 'practice questions with answers' : mode.id === 'explain' ? 'explanations' : 'a quick quiz'} on ${subject.name}.` 
-      } 
-    });
-  };
-
-  const handleStartChat = () => {
-    navigate('/chat');
-  };
+  // Study mode buttons are disabled for now
 
   if (isLoading) {
     return (
@@ -165,17 +155,16 @@ const Subjects = () => {
               {/* Study Mode Buttons */}
               <div className="p-3 grid grid-cols-2 gap-2">
                 {studyModes.map((mode) => (
-                  <button
+                  <div
                     key={mode.id}
-                    onClick={() => handleSubjectAction(subject, mode)}
-                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl glass-button text-left group"
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl glass-button text-left opacity-60 cursor-not-allowed"
                   >
-                    <mode.icon className="w-3.5 h-3.5 text-muted-foreground group-hover:text-accent transition-colors shrink-0" />
+                    <mode.icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                     <div className="min-w-0">
                       <p className="text-xs font-rounded font-bold text-foreground truncate">{mode.name}</p>
                       <p className="text-[10px] text-muted-foreground font-rounded truncate">{mode.description}</p>
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
