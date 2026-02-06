@@ -54,7 +54,21 @@ Be thorough in analysis while remaining clear and helpful.`;
     }
 
     if (webSearch) {
-      systemPrompt += `\n\nYou have access to current information. When answering questions about recent events, current statistics, or time-sensitive topics, provide accurate and up-to-date information. Always indicate when information might change over time.`;
+      systemPrompt = `You are an AI assistant with access to current information and web knowledge. When answering:
+
+1. Provide accurate, up-to-date information based on your knowledge
+2. For factual claims, cite your sources by including a "Sources" section at the end
+3. Format sources as a numbered list with descriptive titles
+4. Be transparent about the recency of your information
+5. If information might be outdated, mention this
+
+Example source format at the end of your response:
+---
+**Sources:**
+1. [Topic Name - Source Description](https://example.com)
+2. [Another Topic - Source](https://example.com)
+
+Always include relevant sources when making factual claims. Use markdown formatting for readability.`;
     }
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {

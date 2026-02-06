@@ -6,7 +6,7 @@ import {
   ChevronDown, 
   ChevronUp, 
   FileText, 
-  GraduationCap,
+  Sparkles,
   ThumbsUp,
   ThumbsDown
 } from 'lucide-react';
@@ -78,9 +78,9 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
   return (
     <div className="mb-5 message-appear">
       <div className="flex gap-4">
-        {/* Avatar - glass effect */}
-        <div className="w-8 h-8 rounded-2xl glass-card flex items-center justify-center shrink-0 border border-accent/30">
-          <GraduationCap className="w-4 h-4 text-accent" />
+        {/* Avatar - gradient accent */}
+        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shrink-0 shadow-md shadow-accent/20">
+          <Sparkles className="w-4 h-4 text-accent-foreground" />
         </div>
 
         {/* Content */}
