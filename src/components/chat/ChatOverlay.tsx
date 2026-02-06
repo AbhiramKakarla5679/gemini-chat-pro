@@ -121,14 +121,14 @@ export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
 
   return (
     <div className="fixed inset-0 z-[100]">
-      {/* Backdrop */}
+      {/* Backdrop - enhanced blur */}
       <div 
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-black/70 backdrop-blur-xl animate-fade-in"
         onClick={onClose}
       />
       
-      {/* Chat Window */}
-      <div className="absolute inset-4 md:inset-8 lg:inset-12 bg-background rounded-2xl overflow-hidden shadow-2xl border border-border flex animate-scale-up">
+      {/* Chat Window - glass effect */}
+      <div className="absolute inset-4 md:inset-8 lg:inset-12 glass rounded-3xl overflow-hidden shadow-2xl flex animate-scale-up">
         {/* Sidebar */}
         <Sidebar
           conversations={conversations}
@@ -142,14 +142,14 @@ export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
 
         {/* Main Chat Area */}
         <div className="flex-1 flex flex-col min-w-0 relative">
-          {/* Header */}
-          <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between">
+          {/* Header - glass buttons */}
+          <div className="absolute top-5 left-5 right-5 z-10 flex items-center justify-between">
             {!sidebarOpen && (
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setSidebarOpen(true)}
-                className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary"
+                className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground glass-button"
               >
                 <Menu className="h-4 w-4" />
               </Button>
@@ -159,7 +159,7 @@ export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary"
+              className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground glass-button"
             >
               <X className="h-4 w-4" />
             </Button>

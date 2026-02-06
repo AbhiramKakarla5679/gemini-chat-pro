@@ -41,7 +41,7 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
 
   if (isUser) {
     return (
-      <div className="flex justify-end mb-4 message-appear">
+      <div className="flex justify-end mb-5 message-appear">
         <div className="max-w-[80%]">
           {/* File attachments */}
           {message.attachments && message.attachments.length > 0 && (
@@ -52,10 +52,10 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
                     <img 
                       src={attachment.base64} 
                       alt={attachment.name}
-                      className="max-w-[200px] max-h-[150px] rounded-xl object-cover border border-border"
+                      className="max-w-[200px] max-h-[150px] rounded-2xl object-cover glass-card"
                     />
                   ) : (
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-secondary text-sm">
+                    <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl glass-card text-sm font-rounded font-bold">
                       <FileText className="w-4 h-4 text-muted-foreground" />
                       <span className="truncate max-w-[150px]">{attachment.name}</span>
                     </div>
@@ -65,9 +65,9 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
             </div>
           )}
           
-          {/* User message bubble */}
-          <div className="px-4 py-3 rounded-2xl bg-secondary text-foreground">
-            <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+          {/* User message bubble - glass effect */}
+          <div className="px-5 py-3.5 rounded-3xl glass-card">
+            <p className="whitespace-pre-wrap text-sm font-rounded font-bold text-foreground">{message.content}</p>
           </div>
         </div>
       </div>
@@ -76,54 +76,54 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
 
   // Assistant message
   return (
-    <div className="mb-4 message-appear">
-      <div className="flex gap-3">
-        {/* Avatar */}
-        <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center shrink-0">
-          <GraduationCap className="w-4 h-4 text-accent-foreground" />
+    <div className="mb-5 message-appear">
+      <div className="flex gap-4">
+        {/* Avatar - glass effect */}
+        <div className="w-8 h-8 rounded-2xl glass-card flex items-center justify-center shrink-0 border border-accent/30">
+          <GraduationCap className="w-4 h-4 text-accent" />
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0 pt-0.5">
-          {/* Thinking section */}
+          {/* Thinking section - glass card */}
           {thinkingContent && (
-            <div className="mb-3">
+            <div className="mb-4">
               <button
                 onClick={() => setShowThinking(!showThinking)}
-                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-2"
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-all duration-300 mb-2 glass-button px-3 py-1.5 rounded-xl"
               >
                 {showThinking ? (
                   <ChevronUp className="w-3.5 h-3.5" />
                 ) : (
                   <ChevronDown className="w-3.5 h-3.5" />
                 )}
-                <span className="font-bold">View reasoning</span>
+                <span className="font-rounded font-bold">View reasoning</span>
               </button>
               {showThinking && (
-                <div className="pl-3 border-l-2 border-border text-muted-foreground text-sm">
+                <div className="pl-4 border-l-2 border-accent/30 text-muted-foreground text-sm glass-card rounded-2xl p-4 ml-0">
                   <ReactMarkdown>{thinkingContent}</ReactMarkdown>
                 </div>
               )}
             </div>
           )}
 
-          {/* Main content */}
+          {/* Main content - SF Pro Bold Rounded */}
           <div className={cn(
-            "prose prose-invert prose-sm max-w-none",
-            "[&_p]:text-foreground [&_p]:leading-relaxed [&_p]:mb-3 [&_p]:text-sm",
-            "[&_code]:bg-secondary [&_code]:text-accent [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs",
-            "[&_pre]:bg-secondary [&_pre]:rounded-xl [&_pre]:p-4 [&_pre]:my-3",
+            "prose prose-invert prose-sm max-w-none font-rounded",
+            "[&_p]:text-foreground [&_p]:leading-relaxed [&_p]:mb-3 [&_p]:text-sm [&_p]:font-bold",
+            "[&_code]:glass-card [&_code]:text-accent [&_code]:px-2 [&_code]:py-1 [&_code]:rounded-lg [&_code]:text-xs [&_code]:font-mono",
+            "[&_pre]:glass-card [&_pre]:rounded-2xl [&_pre]:p-5 [&_pre]:my-4",
             "[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-foreground [&_pre_code]:text-xs",
-            "[&_ul]:text-foreground [&_ol]:text-foreground [&_ul]:my-3 [&_ol]:my-3 [&_ul]:text-sm [&_ol]:text-sm",
-            "[&_li]:text-foreground [&_li]:my-1",
-            "[&_strong]:text-foreground [&_strong]:font-bold",
-            "[&_h1]:text-foreground [&_h2]:text-foreground [&_h3]:text-foreground",
+            "[&_ul]:text-foreground [&_ol]:text-foreground [&_ul]:my-3 [&_ol]:my-3 [&_ul]:text-sm [&_ul]:font-bold [&_ol]:font-bold",
+            "[&_li]:text-foreground [&_li]:my-1.5",
+            "[&_strong]:text-foreground [&_strong]:font-extrabold",
+            "[&_h1]:text-foreground [&_h2]:text-foreground [&_h3]:text-foreground [&_h1]:font-display [&_h2]:font-display [&_h3]:font-display",
             "[&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm",
-            "[&_h1]:font-bold [&_h2]:font-bold [&_h3]:font-bold",
-            "[&_h1]:mt-4 [&_h2]:mt-3 [&_h3]:mt-3",
-            "[&_h1]:mb-2 [&_h2]:mb-2 [&_h3]:mb-1",
-            "[&_a]:text-accent [&_a]:no-underline hover:[&_a]:underline",
-            "[&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_blockquote]:text-sm",
+            "[&_h1]:font-black [&_h2]:font-extrabold [&_h3]:font-bold",
+            "[&_h1]:mt-5 [&_h2]:mt-4 [&_h3]:mt-3",
+            "[&_h1]:mb-3 [&_h2]:mb-2 [&_h3]:mb-2",
+            "[&_a]:text-accent [&_a]:no-underline hover:[&_a]:underline [&_a]:transition-colors",
+            "[&_blockquote]:border-l-2 [&_blockquote]:border-accent/40 [&_blockquote]:pl-4 [&_blockquote]:text-muted-foreground [&_blockquote]:text-sm [&_blockquote]:glass-card [&_blockquote]:rounded-r-2xl [&_blockquote]:py-3 [&_blockquote]:pr-4",
             message.isStreaming && isLatest && "streaming-cursor"
           )}>
             <ReactMarkdown
@@ -141,22 +141,22 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
                   }
                   
                   return (
-                    <div className="relative group my-3">
+                    <div className="relative group my-4">
                       {match && (
-                        <div className="flex items-center justify-between px-3 py-1.5 bg-card rounded-t-xl border-b border-border">
-                          <span className="text-xs text-muted-foreground font-bold">{match[1]}</span>
+                        <div className="flex items-center justify-between px-4 py-2 glass-card rounded-t-2xl border-b border-white/5">
+                          <span className="text-xs text-muted-foreground font-rounded font-bold">{match[1]}</span>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded"
+                            className="h-7 px-3 text-xs text-muted-foreground hover:text-foreground glass-button rounded-xl font-rounded font-bold"
                             onClick={() => navigator.clipboard.writeText(String(children))}
                           >
-                            <Copy className="h-3 w-3 mr-1" />
+                            <Copy className="h-3 w-3 mr-1.5" />
                             Copy
                           </Button>
                         </div>
                       )}
-                      <pre className={cn("!rounded-t-none !mt-0", className)}>
+                      <pre className={cn("!rounded-t-none !mt-0 !rounded-b-2xl", className)}>
                         <code {...props}>{children}</code>
                       </pre>
                     </div>
@@ -168,13 +168,13 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
             </ReactMarkdown>
           </div>
 
-          {/* Actions toolbar */}
+          {/* Actions toolbar - glass buttons */}
           {!message.isStreaming && (
-            <div className="flex items-center gap-0.5 mt-3">
+            <div className="flex items-center gap-1.5 mt-4">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary"
+                className="h-8 w-8 rounded-xl text-muted-foreground hover:text-foreground glass-button"
                 onClick={handleCopy}
               >
                 {copied ? (
@@ -187,8 +187,8 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "h-7 w-7 rounded-md hover:bg-secondary",
-                  liked === true ? "text-accent" : "text-muted-foreground hover:text-foreground"
+                  "h-8 w-8 rounded-xl glass-button",
+                  liked === true ? "text-accent border-accent/30" : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => setLiked(liked === true ? null : true)}
               >
@@ -198,8 +198,8 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "h-7 w-7 rounded-md hover:bg-secondary",
-                  liked === false ? "text-destructive" : "text-muted-foreground hover:text-foreground"
+                  "h-8 w-8 rounded-xl glass-button",
+                  liked === false ? "text-destructive border-destructive/30" : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => setLiked(liked === false ? null : false)}
               >
