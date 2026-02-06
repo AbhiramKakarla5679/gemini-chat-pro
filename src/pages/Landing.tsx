@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { MessageSquare, BookOpen, Brain, Target, Zap, GraduationCap, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ChatOverlay } from '@/components/chat/ChatOverlay';
+import { useNavigate } from 'react-router-dom';
 
 const Landing = () => {
-  const [chatOpen, setChatOpen] = useState(false);
+  const navigate = useNavigate();
 
   const features = [
     {
@@ -29,15 +28,19 @@ const Landing = () => {
     },
   ];
 
+  const handleStartLearning = () => {
+    navigate('/chat');
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden">
       {/* Chat Button */}
       <button
-        onClick={() => setChatOpen(true)}
-        className="fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-2 rounded-full bg-secondary border border-border text-muted-foreground hover:text-foreground hover:bg-accent/10 transition-all duration-200"
+        onClick={handleStartLearning}
+        className="fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-2xl glass-button text-muted-foreground hover:text-foreground transition-all duration-300"
       >
         <MessageSquare className="w-4 h-4" />
-        <span className="text-sm font-bold">Chat</span>
+        <span className="text-sm font-rounded font-bold">Chat</span>
       </button>
 
       {/* Hero */}
@@ -48,26 +51,26 @@ const Landing = () => {
         <div className="text-center max-w-3xl mx-auto relative z-10">
           {/* Badge */}
           <div 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary border border-border mb-8 opacity-0 animate-fade-up"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl glass-card mb-8 opacity-0 animate-fade-up"
             style={{ animationDelay: '0ms' }}
           >
             <GraduationCap className="w-4 h-4 text-accent" />
-            <span className="text-xs font-bold tracking-wider text-muted-foreground uppercase">Beta</span>
+            <span className="text-xs font-rounded font-bold tracking-wider text-muted-foreground uppercase">Beta</span>
           </div>
 
           {/* Title */}
           <h1 
-            className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6 opacity-0 animate-fade-up"
+            className="text-5xl md:text-7xl font-display font-black tracking-tight mb-6 opacity-0 animate-fade-up"
             style={{ animationDelay: '100ms' }}
           >
-            <span className="text-foreground">SaveMyExams</span>
+            <span className="liquid-text">SaveMyExams</span>
             <br />
             <span className="text-accent">Tutor</span>
           </h1>
 
           {/* Subtitle */}
           <p 
-            className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed opacity-0 animate-fade-up"
+            className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed font-rounded font-bold opacity-0 animate-fade-up"
             style={{ animationDelay: '200ms' }}
           >
             Your AI study companion for exam success.
@@ -79,9 +82,9 @@ const Landing = () => {
             style={{ animationDelay: '300ms' }}
           >
             <Button
-              onClick={() => setChatOpen(true)}
+              onClick={handleStartLearning}
               size="lg"
-              className="px-8 h-12 text-base font-bold rounded-full bg-accent hover:bg-accent/90 text-accent-foreground transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              className="px-8 h-12 text-base font-rounded font-bold rounded-2xl bg-accent hover:bg-accent/90 text-accent-foreground transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] glow"
             >
               Start Learning
               <ArrowRight className="w-4 h-4 ml-2" />
@@ -89,7 +92,7 @@ const Landing = () => {
             <Button
               variant="ghost"
               size="lg"
-              className="px-8 h-12 text-base font-bold rounded-full text-muted-foreground hover:text-foreground transition-all duration-200"
+              className="px-8 h-12 text-base font-rounded font-bold rounded-2xl text-muted-foreground hover:text-foreground glass-button transition-all duration-300"
             >
               Watch Demo
             </Button>
@@ -108,10 +111,10 @@ const Landing = () => {
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-display font-black mb-4 liquid-text">
               Everything you need
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground font-rounded font-bold">
               Tools designed for exam success.
             </p>
           </div>
@@ -120,14 +123,14 @@ const Landing = () => {
             {features.map((feature, index) => (
               <div
                 key={feature.title}
-                className="group p-6 rounded-2xl bg-card border border-border hover:border-accent/30 transition-all duration-300 opacity-0 animate-fade-up"
+                className="group p-6 rounded-2xl glass-card opacity-0 animate-fade-up cursor-pointer"
                 style={{ animationDelay: `${400 + index * 100}ms` }}
               >
-                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors duration-300">
+                <div className="w-10 h-10 rounded-xl glass-button flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-all duration-300">
                   <feature.icon className="w-5 h-5 text-accent" />
                 </div>
-                <h3 className="text-sm font-bold mb-1">{feature.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{feature.description}</p>
+                <h3 className="text-sm font-rounded font-bold mb-1">{feature.title}</h3>
+                <p className="text-xs text-muted-foreground font-rounded leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -135,7 +138,7 @@ const Landing = () => {
       </section>
 
       {/* Stats */}
-      <section className="py-24 px-6 border-t border-border">
+      <section className="py-24 px-6 border-t border-border/50">
         <div className="max-w-3xl mx-auto">
           <div className="grid grid-cols-3 gap-8 text-center">
             {[
@@ -148,10 +151,10 @@ const Landing = () => {
                 className="opacity-0 animate-fade-up"
                 style={{ animationDelay: `${800 + index * 100}ms` }}
               >
-                <div className="text-3xl md:text-4xl font-display font-bold text-accent mb-1">
+                <div className="text-3xl md:text-4xl font-display font-black text-accent mb-1">
                   {stat.value}
                 </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-sm text-muted-foreground font-rounded font-bold">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -159,17 +162,15 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-border">
+      <footer className="py-8 px-6 border-t border-border/50">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <GraduationCap className="w-4 h-4 text-accent" />
-            <span className="text-sm font-bold">SaveMyExams Tutor</span>
+            <span className="text-sm font-rounded font-bold">SaveMyExams Tutor</span>
           </div>
-          <p className="text-xs text-muted-foreground">© 2024 SaveMyExams. All rights reserved.</p>
+          <p className="text-xs text-muted-foreground font-rounded">© 2024 SaveMyExams. All rights reserved.</p>
         </div>
       </footer>
-
-      <ChatOverlay isOpen={chatOpen} onClose={() => setChatOpen(false)} />
     </div>
   );
 };
