@@ -28,12 +28,22 @@ export function ChatMessage({ message, isLatest, thinkingMode, webSearch }: Chat
 
   const isUser = message.role === 'user';
 
-  // Parse thinking content from the message
-  const thinkingMatch = message.content.match(/<thinking>([\s\S]*?)<\/thinking>/);
-  const thinkingContent = thinkingMatch ? thinkingMatch[1].trim() : null;
-  const mainContent = thinkingContent 
+  // Parse thinking content from the message (handle partial tags during streaming)
+  const closedThinkingMatch = message.content.match(/<thinking>([\s\S]*?)<\/thinking>/);
+  const partialThinkingMatch = !closedThinkingMatch && message.isStreaming 
+    ? message.content.match(/<thinking>([\s\S]*)$/) 
+    : null;
+  const thinkingContent = closedThinkingMatch 
+    ? closedThinkingMatch[1].trim() 
+    : partialThinkingMatch 
+      ? partialThinkingMatch[1].trim() 
+      : null;
+  const isThinkingInProgress = !!partialThinkingMatch && message.isStreaming;
+  const mainContent = closedThinkingMatch 
     ? message.content.replace(/<thinking>[\s\S]*?<\/thinking>/, '').trim()
-    : message.content;
+    : partialThinkingMatch
+      ? '' // Still thinking, no main content yet
+      : message.content;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(mainContent);
@@ -108,21 +118,35 @@ export function ChatMessage({ message, isLatest, thinkingMode, webSearch }: Chat
           {/* Thinking section - glass card */}
           {thinkingContent && (
             <div className="mb-4">
-              <button
-                onClick={() => setShowThinking(!showThinking)}
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-all duration-300 mb-2 glass-button px-3 py-1.5 rounded-xl"
-              >
-                {showThinking ? (
-                  <ChevronUp className="w-3.5 h-3.5" />
-                ) : (
-                  <ChevronDown className="w-3.5 h-3.5" />
-                )}
-                <span className="font-rounded font-bold">View reasoning</span>
-              </button>
-              {showThinking && (
-                <div className="pl-4 border-l-2 border-accent/30 text-muted-foreground text-sm glass-card rounded-2xl p-4 ml-0">
-                  <ReactMarkdown>{thinkingContent}</ReactMarkdown>
-                </div>
+              {isThinkingInProgress ? (
+                <>
+                  <div className="flex items-center gap-2 mb-2 px-3 py-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-accent reasoning-sparkle" />
+                    <span className="text-xs font-rounded font-bold text-accent">Thinking...</span>
+                  </div>
+                  <div className="pl-4 border-l-2 border-accent/30 text-muted-foreground text-sm glass-card rounded-2xl p-4 ml-0">
+                    <ReactMarkdown>{thinkingContent}</ReactMarkdown>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowThinking(!showThinking)}
+                    className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-all duration-300 mb-2 glass-button px-3 py-1.5 rounded-xl"
+                  >
+                    {showThinking ? (
+                      <ChevronUp className="w-3.5 h-3.5" />
+                    ) : (
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    )}
+                    <span className="font-rounded font-bold">View reasoning</span>
+                  </button>
+                  {showThinking && (
+                    <div className="pl-4 border-l-2 border-accent/30 text-muted-foreground text-sm glass-card rounded-2xl p-4 ml-0">
+                      <ReactMarkdown>{thinkingContent}</ReactMarkdown>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
