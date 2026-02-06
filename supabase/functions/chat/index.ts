@@ -24,7 +24,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, model = 'google/gemini-3-pro-preview', thinkingMode = false, webSearch = false }: ChatRequest = await req.json();
+    const { messages, model = 'openai/gpt-5-nano', thinkingMode = false, webSearch = false }: ChatRequest = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
