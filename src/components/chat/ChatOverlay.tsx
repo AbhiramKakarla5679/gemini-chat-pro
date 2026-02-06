@@ -83,10 +83,10 @@ export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
               <span className="text-2xl">✨</span>
             </div>
             <h2 className="text-2xl font-bold text-white mb-3 font-display">
-              Sign in to chat
+              Sign in to your Tutor
             </h2>
             <p className="text-white/50 mb-6 font-rounded">
-              Create an account or sign in to start chatting and save your conversation history.
+              Create an account or sign in to start learning and save your conversation history.
             </p>
             <Button
               onClick={() => {
