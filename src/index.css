@@ -2,8 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Söhne-like font stack */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* SF Pro font stack */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: local('SF Pro Display'), local('SFProDisplay-Regular');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: local('SF Pro Display Bold'), local('SFProDisplay-Bold');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Rounded';
+  src: local('SF Pro Rounded'), local('SFProRounded-Bold');
+  font-weight: 700;
+  font-style: normal;
+}
 
 @layer base {
   :root {
@@ -61,7 +80,7 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+    font-family: 'SF Pro Display', 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     font-feature-settings: 'ss01' on, 'ss02' on, 'cv01' on, 'cv02' on;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
