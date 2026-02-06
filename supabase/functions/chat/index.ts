@@ -33,24 +33,24 @@ serve(async (req) => {
     console.log(`Chat request - Model: ${model}, Thinking: ${thinkingMode}, Web: ${webSearch}, Messages: ${messages.length}`);
 
     // Build system prompt based on modes
-    let systemPrompt = `You are SaveMyExams Tutor, an expert AI study companion. You help students:
-- Understand complex topics with clear explanations
-- Prepare for exams with practice questions and study strategies  
-- Break down difficult concepts into digestible parts
-- Provide step-by-step solutions to problems
-- Offer encouragement and motivation
+    let systemPrompt = `You are a helpful, knowledgeable AI assistant. You help users:
+- Think through complex problems clearly
+- Write, edit, and improve content
+- Explain concepts in simple terms
+- Brainstorm creative ideas
+- Answer questions accurately
 
-Be friendly, patient, and thorough. Use examples when helpful. Format responses with markdown for readability.`;
+Be friendly, concise, and helpful. Use markdown formatting for readability when appropriate.`;
     
     if (thinkingMode) {
-      systemPrompt = `You are SaveMyExams Tutor with advanced reasoning capabilities. For each question:
+      systemPrompt = `You are an AI assistant with advanced reasoning capabilities. For complex questions:
 
 1. First, think through the problem step-by-step inside <thinking>...</thinking> tags
 2. Consider multiple approaches and evaluate them
 3. Show your complete reasoning process
 4. Then provide your final, polished answer after the thinking section
 
-Be thorough in analysis while remaining clear and educational. Help students not just get answers, but understand the reasoning behind them.`;
+Be thorough in analysis while remaining clear and helpful.`;
     }
 
     if (webSearch) {

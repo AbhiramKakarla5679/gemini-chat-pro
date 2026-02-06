@@ -1,4 +1,4 @@
-import { Plus, Trash2, Menu, LogOut, GraduationCap } from 'lucide-react';
+import { Plus, Trash2, Menu, LogOut, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation } from '@/types/chat';
@@ -52,23 +52,23 @@ export function Sidebar({
       {/* Mobile overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
           onClick={onToggle}
         />
       )}
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed md:relative z-50 h-full w-[260px] bg-card border-r border-border flex flex-col transition-all duration-300",
+        "fixed md:relative z-50 h-full w-[260px] bg-card border-r border-border flex flex-col transition-all duration-300 ease-out",
         isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0 md:w-0 md:border-0 md:overflow-hidden"
       )}>
         {/* Header */}
         <div className="p-3 flex items-center justify-between border-b border-border">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-              <GraduationCap className="w-4 h-4 text-accent-foreground" />
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shadow-md shadow-accent/20">
+              <Sparkles className="w-4 h-4 text-accent-foreground" />
             </div>
-            <span className="font-bold text-sm">Tutor</span>
+            <span className="font-bold text-sm">Assistant</span>
           </div>
           
           <div className="flex items-center gap-1">
