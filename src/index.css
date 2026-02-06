@@ -2,14 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Outfit:wght@700;800;900&display=swap');
-
-/* 
- * Font Strategy:
- * - Outfit: Bold geometric sans-serif for headings (SF Pro Display alternative)
- * - Nunito: Rounded, friendly bold font for UI/body (SF Pro Rounded alternative)
- * Both fonts load from Google Fonts for cross-platform consistency
- */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 @layer base {
   :root {
@@ -69,8 +62,8 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
