@@ -4,6 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation } from '@/types/chat';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { SettingsModal } from './SettingsModal';
 
 interface SidebarProps {
   conversations: Conversation[];
@@ -143,19 +144,22 @@ export function Sidebar({
               <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-xs font-bold text-accent-foreground">
                 {userInitial}
               </div>
-              <span className="text-sm truncate max-w-[120px] text-muted-foreground">
+              <span className="text-sm truncate max-w-[100px] text-muted-foreground">
                 {user?.email?.split('@')[0]}
               </span>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => signOut()}
-              className="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary"
-              title="Sign out"
-            >
-              <LogOut className="h-3.5 w-3.5" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <SettingsModal />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => signOut()}
+                className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary"
+                title="Sign out"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </aside>

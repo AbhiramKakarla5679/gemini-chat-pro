@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -30,9 +31,38 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
+    // Get user from auth header for custom instructions
+    let customInstructions = '';
+    const authHeader = req.headers.get('authorization');
+    if (authHeader) {
+      try {
+        const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+        const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+        const supabase = createClient(supabaseUrl, supabaseKey, {
+          global: { headers: { Authorization: authHeader } }
+        });
+        
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: settings } = await supabase
+            .from('user_settings')
+            .select('custom_instructions')
+            .eq('user_id', user.id)
+            .maybeSingle();
+          
+          if (settings?.custom_instructions) {
+            customInstructions = settings.custom_instructions;
+            console.log('Loaded custom instructions for user:', user.id);
+          }
+        }
+      } catch (err) {
+        console.error('Error loading user settings:', err);
+      }
+    }
+
     console.log(`Chat request - Model: ${model}, Thinking: ${thinkingMode}, Web: ${webSearch}, Messages: ${messages.length}`);
 
-    // Build system prompt based on modes
+    // Build system prompt based on modes and custom instructions
     let systemPrompt = `You are a helpful, knowledgeable AI assistant. You help users:
 - Think through complex problems clearly
 - Write, edit, and improve content
@@ -41,6 +71,11 @@ serve(async (req) => {
 - Answer questions accurately
 
 Be friendly, concise, and helpful. Use markdown formatting for readability when appropriate.`;
+    
+    // Add custom instructions if provided
+    if (customInstructions) {
+      systemPrompt += `\n\n**User's Custom Instructions:**\n${customInstructions}`;
+    }
     
     if (thinkingMode) {
       systemPrompt = `You are an AI assistant with advanced reasoning capabilities. For complex questions:
@@ -51,6 +86,10 @@ Be friendly, concise, and helpful. Use markdown formatting for readability when 
 4. Then provide your final, polished answer after the thinking section
 
 Be thorough in analysis while remaining clear and helpful.`;
+      
+      if (customInstructions) {
+        systemPrompt += `\n\n**User's Custom Instructions:**\n${customInstructions}`;
+      }
     }
 
     if (webSearch) {
@@ -69,6 +108,10 @@ Example source format at the end of your response:
 2. [Another Topic - Source](https://example.com)
 
 Always include relevant sources when making factual claims. Use markdown formatting for readability.`;
+
+      if (customInstructions) {
+        systemPrompt += `\n\n**User's Custom Instructions:**\n${customInstructions}`;
+      }
     }
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
