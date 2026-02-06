@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { Menu, Plus, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { DEFAULT_MODEL } from '@/types/chat';
 
 const Index = () => {
@@ -17,6 +17,8 @@ const Index = () => {
   const [droppedFiles, setDroppedFiles] = useState<File[]>([]);
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const prefill = (location.state as any)?.prefill as string | undefined;
 
   const {
     conversations,
@@ -36,6 +38,21 @@ const Index = () => {
       navigate('/auth');
     }
   }, [user, authLoading, navigate]);
+
+  // Auto-send prefilled message from subjects page
+  useEffect(() => {
+    if (prefill && !authLoading && user) {
+      createNewConversation();
+      // Small delay to let the conversation initialize
+      const timer = setTimeout(() => {
+        sendMessage(prefill, []);
+        // Clear the state so it doesn't re-send on re-render
+        window.history.replaceState({}, document.title);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prefill, authLoading, user]);
 
   useEffect(() => {
     if (error) {

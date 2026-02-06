@@ -29,7 +29,7 @@ const Landing = () => {
   ];
 
   const handleStartLearning = () => {
-    navigate('/chat');
+    navigate('/subjects');
   };
 
   return (

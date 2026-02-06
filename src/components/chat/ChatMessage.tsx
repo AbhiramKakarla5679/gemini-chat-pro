@@ -107,23 +107,45 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
             </div>
           )}
 
-          {/* Main content - SF Pro Bold Rounded */}
+          {/* Main content - ChatGPT-style rich formatting */}
           <div className={cn(
-            "prose prose-invert prose-sm max-w-none font-rounded",
-            "[&_p]:text-foreground [&_p]:leading-relaxed [&_p]:mb-3 [&_p]:text-sm [&_p]:font-bold",
-            "[&_code]:glass-card [&_code]:text-accent [&_code]:px-2 [&_code]:py-1 [&_code]:rounded-lg [&_code]:text-xs [&_code]:font-mono",
-            "[&_pre]:glass-card [&_pre]:rounded-2xl [&_pre]:p-5 [&_pre]:my-4",
-            "[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-foreground [&_pre_code]:text-xs",
-            "[&_ul]:text-foreground [&_ol]:text-foreground [&_ul]:my-3 [&_ol]:my-3 [&_ul]:text-sm [&_ul]:font-bold [&_ol]:font-bold",
-            "[&_li]:text-foreground [&_li]:my-1.5",
+            "prose prose-invert max-w-none font-rounded",
+            // Paragraphs
+            "[&_p]:text-foreground [&_p]:leading-[1.75] [&_p]:mb-4 [&_p]:text-[15px] [&_p]:font-medium",
+            // Inline code
+            "[&_code]:glass-card [&_code]:text-accent [&_code]:px-2 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:text-[13px] [&_code]:font-mono [&_code]:font-semibold",
+            // Code blocks
+            "[&_pre]:glass-card [&_pre]:rounded-2xl [&_pre]:p-5 [&_pre]:my-5",
+            "[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-foreground/90 [&_pre_code]:text-[13px] [&_pre_code]:leading-relaxed",
+            // Lists
+            "[&_ul]:text-foreground [&_ol]:text-foreground [&_ul]:my-4 [&_ol]:my-4 [&_ul]:text-[15px] [&_ol]:text-[15px]",
+            "[&_ul]:pl-5 [&_ol]:pl-5",
+            "[&_li]:text-foreground [&_li]:my-2 [&_li]:leading-[1.7] [&_li]:font-medium",
+            "[&_li_p]:mb-1",
+            // Bold / Strong
             "[&_strong]:text-foreground [&_strong]:font-extrabold",
-            "[&_h1]:text-foreground [&_h2]:text-foreground [&_h3]:text-foreground [&_h1]:font-display [&_h2]:font-display [&_h3]:font-display",
-            "[&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm",
-            "[&_h1]:font-black [&_h2]:font-extrabold [&_h3]:font-bold",
-            "[&_h1]:mt-5 [&_h2]:mt-4 [&_h3]:mt-3",
-            "[&_h1]:mb-3 [&_h2]:mb-2 [&_h3]:mb-2",
-            "[&_a]:text-accent [&_a]:no-underline hover:[&_a]:underline [&_a]:transition-colors",
-            "[&_blockquote]:border-l-2 [&_blockquote]:border-accent/40 [&_blockquote]:pl-4 [&_blockquote]:text-muted-foreground [&_blockquote]:text-sm [&_blockquote]:glass-card [&_blockquote]:rounded-r-2xl [&_blockquote]:py-3 [&_blockquote]:pr-4",
+            // Italic / Emphasis
+            "[&_em]:text-foreground/80 [&_em]:italic",
+            // Headings - distinct sizes like ChatGPT
+            "[&_h1]:text-foreground [&_h2]:text-foreground [&_h3]:text-foreground [&_h4]:text-foreground",
+            "[&_h1]:font-display [&_h2]:font-display [&_h3]:font-display [&_h4]:font-rounded",
+            "[&_h1]:text-2xl [&_h2]:text-xl [&_h3]:text-lg [&_h4]:text-base",
+            "[&_h1]:font-black [&_h2]:font-extrabold [&_h3]:font-bold [&_h4]:font-bold",
+            "[&_h1]:mt-7 [&_h2]:mt-6 [&_h3]:mt-5 [&_h4]:mt-4",
+            "[&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-2 [&_h4]:mb-2",
+            "[&_h1]:tracking-tight [&_h2]:tracking-tight",
+            "[&_h1]:border-b [&_h1]:border-border/30 [&_h1]:pb-3",
+            // Links
+            "[&_a]:text-accent [&_a]:underline [&_a]:underline-offset-2 [&_a]:decoration-accent/40 hover:[&_a]:decoration-accent [&_a]:transition-colors",
+            // Blockquotes
+            "[&_blockquote]:border-l-3 [&_blockquote]:border-accent/50 [&_blockquote]:pl-4 [&_blockquote]:text-muted-foreground [&_blockquote]:text-[15px] [&_blockquote]:italic",
+            "[&_blockquote]:glass-card [&_blockquote]:rounded-r-2xl [&_blockquote]:py-3 [&_blockquote]:pr-4 [&_blockquote]:my-5",
+            // Horizontal rules
+            "[&_hr]:border-border/30 [&_hr]:my-6",
+            // Tables
+            "[&_table]:w-full [&_table]:my-5 [&_table]:glass-card [&_table]:rounded-xl [&_table]:overflow-hidden",
+            "[&_th]:px-4 [&_th]:py-2.5 [&_th]:text-left [&_th]:text-xs [&_th]:font-bold [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-muted-foreground [&_th]:border-b [&_th]:border-border/30",
+            "[&_td]:px-4 [&_td]:py-2.5 [&_td]:text-sm [&_td]:border-b [&_td]:border-border/20",
             message.isStreaming && isLatest && "streaming-cursor"
           )}>
             <ReactMarkdown
@@ -141,14 +163,14 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
                   }
                   
                   return (
-                    <div className="relative group my-4">
+                    <div className="relative group my-5 not-prose">
                       {match && (
-                        <div className="flex items-center justify-between px-4 py-2 glass-card rounded-t-2xl border-b border-white/5">
-                          <span className="text-xs text-muted-foreground font-rounded font-bold">{match[1]}</span>
+                        <div className="flex items-center justify-between px-4 py-2.5 glass-card rounded-t-2xl border-b border-border/20">
+                          <span className="text-xs text-muted-foreground font-mono font-semibold uppercase tracking-wider">{match[1]}</span>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 px-3 text-xs text-muted-foreground hover:text-foreground glass-button rounded-xl font-rounded font-bold"
+                            className="h-7 px-3 text-xs text-muted-foreground hover:text-foreground glass-button rounded-lg font-rounded font-bold"
                             onClick={() => navigator.clipboard.writeText(String(children))}
                           >
                             <Copy className="h-3 w-3 mr-1.5" />
@@ -156,8 +178,8 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
                           </Button>
                         </div>
                       )}
-                      <pre className={cn("!rounded-t-none !mt-0 !rounded-b-2xl", className)}>
-                        <code {...props}>{children}</code>
+                      <pre className={cn("!rounded-t-none !mt-0 !rounded-b-2xl glass-card !border-t-0 p-5", className)}>
+                        <code className="text-[13px] leading-relaxed text-foreground/90 font-mono" {...props}>{children}</code>
                       </pre>
                     </div>
                   );

@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import Subjects from "./pages/Subjects";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/subjects" element={<Subjects />} />
             <Route path="/chat" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
