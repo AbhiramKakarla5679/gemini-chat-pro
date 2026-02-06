@@ -504,37 +504,37 @@ export function ChatInput({
         </div>
 
         {/* Model selector and disclaimer */}
-        <div className="flex items-center justify-between mt-3 px-1">
+        <div className="flex items-center justify-center mt-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className="h-7 px-3 text-xs text-muted-foreground hover:text-foreground glass-button rounded-xl font-rounded font-bold"
+                className="h-10 px-6 text-sm text-muted-foreground hover:text-foreground rounded-full border-2 border-accent/50 hover:border-accent bg-transparent hover:bg-accent/5 font-rounded font-medium transition-all duration-300"
               >
                 {currentModelInfo.name}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="glass-card border-white/10 min-w-[220px]">
+            <DropdownMenuContent align="center" className="glass-card border-white/10 min-w-[260px] rounded-2xl p-2">
               {AVAILABLE_MODELS.map((model) => (
                 <DropdownMenuItem
                   key={model.id}
                   onClick={() => onModelChange(model.id)}
                   className={cn(
-                    "cursor-pointer flex flex-col items-start font-rounded",
-                    currentModel === model.id && "bg-accent/10 text-accent"
+                    "cursor-pointer flex flex-col items-start font-rounded rounded-xl px-3 py-2.5 my-0.5",
+                    currentModel === model.id && "bg-accent/15 text-accent"
                   )}
                 >
-                  <span className="font-bold">{model.name}</span>
+                  <span className="font-semibold">{model.name}</span>
                   <span className="text-xs text-muted-foreground">{model.description}</span>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <p className="text-xs text-muted-foreground font-rounded">
-            AI can make mistakes. Verify important info.
-          </p>
         </div>
+
+        <p className="text-center text-xs text-muted-foreground font-rounded mt-2">
+          AI can make mistakes. Verify important info.
+        </p>
       </div>
     </div>
   );
