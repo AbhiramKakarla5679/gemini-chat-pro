@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Nunito', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-        display: ['Outfit', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-        rounded: ['Nunito', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        display: ['"Plus Jakarta Sans"', 'sans-serif'],
+        rounded: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
