@@ -22,7 +22,7 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
           <div className="w-12 h-12 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#ab68ff] via-[#ff7eb3] to-[#ff9f68] flex items-center justify-center">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-medium text-[#ececec] mb-2">
+          <h1 className="text-2xl font-bold text-[#ececec] mb-2 font-display">
             What can I help with?
           </h1>
         </div>
