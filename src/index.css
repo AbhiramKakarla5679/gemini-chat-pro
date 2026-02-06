@@ -2,31 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* SF Pro font stack - uses system fonts on Apple devices, Inter as fallback */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-/* SF Pro Display - for headings and display text */
-@font-face {
-  font-family: 'SF Pro Display';
-  src: local('SF Pro Display'), local('SFProDisplay-Regular'), local('.SFNSDisplay-Regular');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'SF Pro Display';
-  src: local('SF Pro Display Medium'), local('SFProDisplay-Medium'), local('.SFNSDisplay-Medium');
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'SF Pro Display';
-  src: local('SF Pro Display Semibold'), local('SFProDisplay-Semibold'), local('.SFNSDisplay-Semibold');
-  font-weight: 600;
-  font-style: normal;
-}
-
+/* SF Pro Display - Bold weights */
 @font-face {
   font-family: 'SF Pro Display';
   src: local('SF Pro Display Bold'), local('SFProDisplay-Bold'), local('.SFNSDisplay-Bold');
@@ -41,28 +19,14 @@
   font-style: normal;
 }
 
-/* SF Pro Rounded - for friendly UI elements */
 @font-face {
-  font-family: 'SF Pro Rounded';
-  src: local('SF Pro Rounded Regular'), local('SFProRounded-Regular');
-  font-weight: 400;
+  font-family: 'SF Pro Display';
+  src: local('SF Pro Display Black'), local('SFProDisplay-Black'), local('.SFNSDisplay-Black');
+  font-weight: 900;
   font-style: normal;
 }
 
-@font-face {
-  font-family: 'SF Pro Rounded';
-  src: local('SF Pro Rounded Medium'), local('SFProRounded-Medium');
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'SF Pro Rounded';
-  src: local('SF Pro Rounded Semibold'), local('SFProRounded-Semibold');
-  font-weight: 600;
-  font-style: normal;
-}
-
+/* SF Pro Rounded - Bold weights */
 @font-face {
   font-family: 'SF Pro Rounded';
   src: local('SF Pro Rounded Bold'), local('SFProRounded-Bold');
@@ -70,48 +34,53 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'SF Pro Rounded';
+  src: local('SF Pro Rounded Heavy'), local('SFProRounded-Heavy');
+  font-weight: 800;
+  font-style: normal;
+}
+
 @layer base {
   :root {
-    /* Dark theme */
-    --background: 0 0% 13%;
-    --foreground: 0 0% 93%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 11%;
-    --card-foreground: 0 0% 93%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 18%;
-    --popover-foreground: 0 0% 93%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 0 0% 93%;
-    --primary-foreground: 0 0% 9%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 4%;
 
-    --secondary: 0 0% 18%;
-    --secondary-foreground: 0 0% 93%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 0 0% 18%;
-    --muted-foreground: 0 0% 56%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 50%;
 
-    --accent: 0 0% 18%;
-    --accent-foreground: 0 0% 93%;
+    --accent: 262 83% 58%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 26%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 56%;
+    --border: 0 0% 14%;
+    --input: 0 0% 12%;
+    --ring: 262 83% 58%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* Sidebar */
-    --sidebar-background: 0 0% 9%;
-    --sidebar-foreground: 0 0% 70%;
-    --sidebar-primary: 0 0% 93%;
-    --sidebar-primary-foreground: 0 0% 9%;
-    --sidebar-accent: 0 0% 18%;
-    --sidebar-accent-foreground: 0 0% 93%;
-    --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 0 0% 56%;
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 0 0% 60%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 0 0% 12%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 12%;
+    --sidebar-ring: 262 83% 58%;
   }
 }
 
@@ -126,16 +95,15 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'SF Pro Display', 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    font-feature-settings: 'ss01' on, 'ss02' on, 'cv01' on, 'cv02' on;
+    font-family: 'SF Pro Rounded', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 700;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -143,24 +111,24 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 4px;
+    background: hsl(var(--muted));
+    border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: hsl(var(--muted-foreground));
   }
 }
 
 @layer components {
   .message-appear {
-    animation: messageAppear 0.3s ease-out forwards;
+    animation: messageSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
-  @keyframes messageAppear {
+  @keyframes messageSlide {
     from {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(16px);
     }
     to {
       opacity: 1;
@@ -169,14 +137,30 @@
   }
 
   .streaming-cursor::after {
-    content: '▊';
-    animation: blink 1s step-end infinite;
-    margin-left: 2px;
-    opacity: 0.7;
+    content: '▌';
+    animation: cursorBlink 0.8s ease-in-out infinite;
+    margin-left: 1px;
+    color: hsl(var(--accent));
   }
 
-  @keyframes blink {
-    0%, 50% { opacity: 0.7; }
-    51%, 100% { opacity: 0; }
+  @keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .glass {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .glow {
+    box-shadow: 0 0 60px -12px hsl(var(--accent) / 0.4);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
 }
