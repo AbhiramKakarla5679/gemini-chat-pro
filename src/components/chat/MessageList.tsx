@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { Message } from '@/types/chat';
 import { ChatMessage } from './ChatMessage';
-import { Sparkles } from 'lucide-react';
+import { GraduationCap } from 'lucide-react';
 
 interface MessageListProps {
   messages: Message[];
@@ -18,13 +18,16 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center p-8">
-        <div className="text-center max-w-lg animate-fade-in">
-          <div className="w-12 h-12 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#ab68ff] via-[#ff7eb3] to-[#ff9f68] flex items-center justify-center">
-            <Sparkles className="w-6 h-6 text-white" />
+        <div className="text-center max-w-md opacity-0 animate-fade-up" style={{ animationDelay: '100ms' }}>
+          <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-accent flex items-center justify-center">
+            <GraduationCap className="w-7 h-7 text-accent-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-[#ececec] mb-2 font-display">
-            What can I help with?
+          <h1 className="text-xl font-display font-bold mb-2">
+            How can I help you study?
           </h1>
+          <p className="text-sm text-muted-foreground">
+            Ask me anything about your subjects, exam prep, or homework.
+          </p>
         </div>
       </div>
     );
@@ -32,7 +35,7 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="max-w-3xl mx-auto py-6 px-4">
+      <div className="max-w-3xl mx-auto py-6 px-4 pt-16">
         {messages.map((message, index) => (
           <ChatMessage 
             key={message.id} 

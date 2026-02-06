@@ -14,6 +14,7 @@ interface ChatRequest {
   messages: Message[];
   model?: string;
   thinkingMode?: boolean;
+  webSearch?: boolean;
 }
 
 serve(async (req) => {
@@ -22,26 +23,38 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, model = 'google/gemini-3-pro-preview', thinkingMode = false }: ChatRequest = await req.json();
+    const { messages, model = 'google/gemini-3-pro-preview', thinkingMode = false, webSearch = false }: ChatRequest = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    console.log(`Chat request received - Model: ${model}, Thinking: ${thinkingMode}, Messages: ${messages.length}`);
+    console.log(`Chat request - Model: ${model}, Thinking: ${thinkingMode}, Web: ${webSearch}, Messages: ${messages.length}`);
 
-    // Build system prompt based on mode
-    let systemPrompt = "You are a helpful, harmless, and honest AI assistant. You provide clear, accurate, and thoughtful responses. You can help with coding, analysis, writing, math, and general questions.";
+    // Build system prompt based on modes
+    let systemPrompt = `You are SaveMyExams Tutor, an expert AI study companion. You help students:
+- Understand complex topics with clear explanations
+- Prepare for exams with practice questions and study strategies  
+- Break down difficult concepts into digestible parts
+- Provide step-by-step solutions to problems
+- Offer encouragement and motivation
+
+Be friendly, patient, and thorough. Use examples when helpful. Format responses with markdown for readability.`;
     
     if (thinkingMode) {
-      systemPrompt = `You are a helpful AI assistant with deep reasoning capabilities. When answering:
-1. First, share your step-by-step thinking process inside <thinking>...</thinking> tags
-2. Consider multiple angles and possibilities
-3. Show your reasoning clearly
-4. Then provide your final answer after the thinking section
+      systemPrompt = `You are SaveMyExams Tutor with advanced reasoning capabilities. For each question:
 
-Be thorough in your analysis while remaining clear and helpful.`;
+1. First, think through the problem step-by-step inside <thinking>...</thinking> tags
+2. Consider multiple approaches and evaluate them
+3. Show your complete reasoning process
+4. Then provide your final, polished answer after the thinking section
+
+Be thorough in analysis while remaining clear and educational. Help students not just get answers, but understand the reasoning behind them.`;
+    }
+
+    if (webSearch) {
+      systemPrompt += `\n\nYou have access to current information. When answering questions about recent events, current statistics, or time-sensitive topics, provide accurate and up-to-date information. Always indicate when information might change over time.`;
     }
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {

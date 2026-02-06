@@ -1,15 +1,9 @@
-import { Plus, MessageSquare, Trash2, Menu, Search, MoreHorizontal, LogOut } from 'lucide-react';
+import { Plus, Trash2, Menu, LogOut, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation } from '@/types/chat';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 interface SidebarProps {
   conversations: Conversation[];
@@ -39,9 +33,9 @@ export function Sidebar({
     
     if (days === 0) return 'Today';
     if (days === 1) return 'Yesterday';
-    if (days < 7) return 'Previous 7 Days';
-    if (days < 30) return 'Previous 30 Days';
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    if (days < 7) return 'This Week';
+    if (days < 30) return 'This Month';
+    return date.toLocaleDateString('en-US', { month: 'short' });
   };
 
   const groupedConversations = conversations.reduce((groups, conv) => {
@@ -52,7 +46,6 @@ export function Sidebar({
   }, {} as Record<string, Conversation[]>);
 
   const userInitial = user?.email?.charAt(0).toUpperCase() || 'U';
-  const userEmail = user?.email || 'User';
 
   return (
     <>
@@ -66,44 +59,44 @@ export function Sidebar({
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed md:relative z-50 h-full w-[260px] bg-[#171717] flex flex-col transition-transform duration-300",
-        isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0 md:w-0 md:overflow-hidden"
+        "fixed md:relative z-50 h-full w-[260px] bg-card border-r border-border flex flex-col transition-all duration-300",
+        isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0 md:w-0 md:border-0 md:overflow-hidden"
       )}>
         {/* Header */}
-        <div className="p-2 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggle}
-            className="h-10 w-10 rounded-lg text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#2f2f2f]"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
+        <div className="p-3 flex items-center justify-between border-b border-border">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+              <GraduationCap className="w-4 h-4 text-accent-foreground" />
+            </div>
+            <span className="font-bold text-sm">Tutor</span>
+          </div>
           
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10 rounded-lg text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+              onClick={onNewChat}
+              className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary"
+              title="New chat"
             >
-              <Search className="h-5 w-5" />
+              <Plus className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              onClick={onNewChat}
-              className="h-10 w-10 rounded-lg text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+              onClick={onToggle}
+              className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary md:hidden"
             >
-              <Plus className="h-5 w-5" />
+              <Menu className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
         {/* Conversation list */}
-        <ScrollArea className="flex-1 px-2">
+        <ScrollArea className="flex-1 px-2 py-2">
           {Object.entries(groupedConversations).map(([group, convs]) => (
-            <div key={group} className="mb-4">
-              <h3 className="px-3 py-2 text-xs font-medium text-[#8e8e8e] font-rounded">
+            <div key={group} className="mb-3">
+              <h3 className="px-2 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 {group}
               </h3>
               <div className="space-y-0.5">
@@ -111,37 +104,25 @@ export function Sidebar({
                   <div
                     key={conv.id}
                     className={cn(
-                      "group relative flex items-center gap-2 px-3 py-2.5 rounded-lg cursor-pointer transition-colors",
+                      "group relative flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer transition-colors",
                       currentConversationId === conv.id
-                        ? "bg-[#2f2f2f] text-[#ececec]"
-                        : "text-[#b4b4b4] hover:bg-[#212121] hover:text-[#ececec]"
+                        ? "bg-secondary text-foreground"
+                        : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                     )}
                     onClick={() => onSelectConversation(conv.id)}
                   >
                     <span className="truncate text-sm flex-1">{conv.title}</span>
-                    <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#424242] rounded-lg shrink-0"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 text-[#8e8e8e] hover:text-red-400 hover:bg-[#424242] rounded-lg shrink-0"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteConversation(conv.id);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteConversation(conv.id);
+                      }}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -149,53 +130,35 @@ export function Sidebar({
           ))}
           
           {conversations.length === 0 && (
-            <div className="px-3 py-8 text-center text-[#8e8e8e] text-sm font-rounded">
+            <div className="px-2 py-8 text-center text-muted-foreground text-sm">
               No conversations yet
             </div>
           )}
         </ScrollArea>
 
         {/* Footer with user */}
-        <div className="p-2 border-t border-[#2f2f2f]">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full justify-between h-12 px-3 text-[#ececec] hover:bg-[#2f2f2f] rounded-lg group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-sm font-bold text-white font-display">
-                    {userInitial}
-                  </div>
-                  <span className="text-sm truncate max-w-[140px]">{userEmail}</span>
-                </div>
-                <MoreHorizontal className="h-4 w-4 text-[#8e8e8e] opacity-0 group-hover:opacity-100 transition-opacity" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 bg-[#2f2f2f] border-[#424242]">
-              <DropdownMenuItem 
-                onClick={() => signOut()}
-                className="text-[#ececec] focus:bg-[#424242] focus:text-[#ececec] cursor-pointer"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="p-2 border-t border-border">
+          <div className="flex items-center justify-between px-2 py-2">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-xs font-bold text-accent-foreground">
+                {userInitial}
+              </div>
+              <span className="text-sm truncate max-w-[120px] text-muted-foreground">
+                {user?.email?.split('@')[0]}
+              </span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => signOut()}
+              className="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary"
+              title="Sign out"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+            </Button>
+          </div>
         </div>
       </aside>
-
-      {/* Toggle button when sidebar is closed on mobile */}
-      {!isOpen && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onToggle}
-          className="fixed top-3 left-3 z-40 md:hidden h-10 w-10 rounded-lg text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#2f2f2f]"
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
-      )}
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Loader2 } from 'lucide-react';
+import { X, Loader2, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { MessageList } from './MessageList';
@@ -15,7 +15,7 @@ interface ChatOverlayProps {
 }
 
 export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   
@@ -30,6 +30,7 @@ export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
     selectConversation,
     deleteConversation,
     updateModel,
+    clearCurrentConversation,
   } = useChat();
 
   useEffect(() => {
@@ -39,7 +40,11 @@ export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
   }, [error]);
 
   const handleNewChat = () => {
-    createNewConversation();
+    clearCurrentConversation();
+  };
+
+  const handleSend = (content: string, attachments: any[], thinkingMode: boolean, webSearch: boolean) => {
+    sendMessage(content, attachments, thinkingMode, webSearch);
   };
 
   // Handle escape key
@@ -64,36 +69,36 @@ export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
     return (
       <div className="fixed inset-0 z-[100]">
         <div 
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
+          className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in"
           onClick={onClose}
         />
         
-        <div className="absolute inset-4 md:inset-8 lg:inset-12 bg-[#212121] rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex items-center justify-center animate-scale-in">
+        <div className="absolute inset-4 md:inset-8 lg:inset-12 bg-background rounded-2xl overflow-hidden shadow-2xl border border-border flex items-center justify-center animate-scale-up">
           <Button
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="absolute top-4 right-4 h-8 w-8 rounded-lg text-white/50 hover:text-white hover:bg-white/10"
+            className="absolute top-4 right-4 h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary"
           >
             <X className="h-4 w-4" />
           </Button>
           
-          <div className="text-center p-8 max-w-md">
-            <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center">
-              <span className="text-2xl">✨</span>
+          <div className="text-center p-8 max-w-sm">
+            <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-accent flex items-center justify-center">
+              <span className="text-2xl">📚</span>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-3 font-display">
-              Sign in to your Tutor
+            <h2 className="text-xl font-display font-bold mb-2">
+              Sign in to start
             </h2>
-            <p className="text-white/50 mb-6 font-rounded">
-              Create an account or sign in to start learning and save your conversation history.
+            <p className="text-sm text-muted-foreground mb-6">
+              Create an account to save your conversations and track your progress.
             </p>
             <Button
               onClick={() => {
                 onClose();
                 navigate('/auth');
               }}
-              className="px-8 py-3 text-base font-semibold rounded-xl bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:from-purple-600 hover:via-pink-600 hover:to-orange-600 text-white shadow-lg shadow-purple-500/25"
+              className="px-6 h-11 font-bold rounded-xl bg-accent hover:bg-accent/90 text-accent-foreground"
             >
               Sign In
             </Button>
@@ -106,9 +111,9 @@ export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
   if (authLoading || isLoadingConversations) {
     return (
       <div className="fixed inset-0 z-[100]">
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" />
-        <div className="absolute inset-4 md:inset-8 lg:inset-12 bg-[#212121] rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex items-center justify-center animate-scale-in">
-          <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
+        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in" />
+        <div className="absolute inset-4 md:inset-8 lg:inset-12 bg-background rounded-2xl overflow-hidden shadow-2xl border border-border flex items-center justify-center animate-scale-up">
+          <Loader2 className="w-6 h-6 animate-spin text-accent" />
         </div>
       </div>
     );
@@ -118,12 +123,12 @@ export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
     <div className="fixed inset-0 z-[100]">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
       
       {/* Chat Window */}
-      <div className="absolute inset-4 md:inset-8 lg:inset-12 bg-[#212121] rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex animate-scale-in">
+      <div className="absolute inset-4 md:inset-8 lg:inset-12 bg-background rounded-2xl overflow-hidden shadow-2xl border border-border flex animate-scale-up">
         {/* Sidebar */}
         <Sidebar
           conversations={conversations}
@@ -138,12 +143,23 @@ export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
         {/* Main Chat Area */}
         <div className="flex-1 flex flex-col min-w-0 relative">
           {/* Header */}
-          <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+          <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between">
+            {!sidebarOpen && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSidebarOpen(true)}
+                className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+            )}
+            <div className="flex-1" />
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-8 w-8 rounded-lg text-white/50 hover:text-white hover:bg-white/10"
+              className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -155,7 +171,7 @@ export function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
           />
 
           <ChatInput
-            onSend={sendMessage}
+            onSend={handleSend}
             isLoading={isLoading}
             currentModel={currentConversation?.model || 'google/gemini-3-pro-preview'}
             onModelChange={updateModel}
