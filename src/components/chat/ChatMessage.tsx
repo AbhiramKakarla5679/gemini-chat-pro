@@ -122,19 +122,19 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
             "[&_ul]:pl-5 [&_ol]:pl-5",
             "[&_li]:text-foreground [&_li]:my-2 [&_li]:leading-[1.7] [&_li]:font-medium",
             "[&_li_p]:mb-1",
-            // Bold / Strong
-            "[&_strong]:text-foreground [&_strong]:font-extrabold",
+            // Bold / Strong - purple accent
+            "[&_strong]:text-accent [&_strong]:font-extrabold",
             // Italic / Emphasis
-            "[&_em]:text-foreground/80 [&_em]:italic",
-            // Headings - distinct sizes like ChatGPT
-            "[&_h1]:text-foreground [&_h2]:text-foreground [&_h3]:text-foreground [&_h4]:text-foreground",
+            "[&_em]:text-accent/70 [&_em]:italic",
+            // Headings - purple accented
+            "[&_h1]:text-accent [&_h2]:text-accent [&_h3]:text-foreground [&_h4]:text-foreground",
             "[&_h1]:font-display [&_h2]:font-display [&_h3]:font-display [&_h4]:font-rounded",
             "[&_h1]:text-2xl [&_h2]:text-xl [&_h3]:text-lg [&_h4]:text-base",
             "[&_h1]:font-black [&_h2]:font-extrabold [&_h3]:font-bold [&_h4]:font-bold",
             "[&_h1]:mt-7 [&_h2]:mt-6 [&_h3]:mt-5 [&_h4]:mt-4",
             "[&_h1]:mb-3 [&_h2]:mb-3 [&_h3]:mb-2 [&_h4]:mb-2",
             "[&_h1]:tracking-tight [&_h2]:tracking-tight",
-            "[&_h1]:border-b [&_h1]:border-border/30 [&_h1]:pb-3",
+            "[&_h1]:border-b [&_h1]:border-accent/20 [&_h1]:pb-3",
             // Links
             "[&_a]:text-accent [&_a]:underline [&_a]:underline-offset-2 [&_a]:decoration-accent/40 hover:[&_a]:decoration-accent [&_a]:transition-colors",
             // Blockquotes
