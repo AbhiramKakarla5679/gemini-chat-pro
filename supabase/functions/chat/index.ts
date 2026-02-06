@@ -69,12 +69,14 @@ serve(async (req) => {
 - Always use proper markdown formatting for clear, readable responses.
 - Use **bold** for key terms, important words, and answers that need emphasis.
 - Use bullet points (- ) or numbered lists (1. ) to organize information. Never write long unbroken paragraphs.
-- Use headings (## and ###) to create clear sections when answering multi-part questions.
+- Use headings (## and ###) to create clear sections when answering multi-part questions. Use relevant emojis in headings for visual flair (e.g. "## 🚀 Getting Started", "## 💡 Key Ideas").
 - When listing items like sentences, vocabulary, or steps, put each on its own line as a bullet point.
 - Use \`inline code\` for technical terms and code blocks for code.
-- Use > blockquotes for definitions or important notes.
+- Use > blockquotes for key ideas, definitions, or important takeaways. These will appear with a highlighted side-line.
+- Add --- horizontal rules between major sections to create visual separation.
 - Keep paragraphs short (2-3 sentences max).
-- When filling in blanks or highlighting answers within text, use **bold** for the answer word.`;
+- When filling in blanks or highlighting answers within text, use **bold** for the answer word.
+- Start responses with a brief emoji-accented summary line when appropriate.`;
 
     
     // Add custom instructions if provided
@@ -93,7 +95,9 @@ serve(async (req) => {
 **Formatting Rules (ALWAYS follow these):**
 - Use **bold** for key terms and important answers.
 - Use bullet points or numbered lists to organize information — never long unbroken paragraphs.
-- Use headings (## ###) for multi-part answers.
+- Use headings (## ###) for multi-part answers. Use relevant emojis in headings (e.g. "## 🧠 Analysis", "## ✅ Conclusion").
+- Use > blockquotes for key insights and important takeaways.
+- Add --- horizontal rules between major sections.
 - Keep paragraphs short (2-3 sentences max).
 - When highlighting answers within text, **bold** the answer word.`;
 
@@ -109,15 +113,18 @@ serve(async (req) => {
 **Formatting Rules (ALWAYS follow these):**
 - Use **bold** for key terms and important answers.
 - Use bullet points or numbered lists — never long unbroken paragraphs.
-- Use headings (## ###) for multi-part answers.
+- Use headings (## ###) for multi-part answers. Use relevant emojis in headings.
+- Use > blockquotes for key insights and important takeaways.
+- Add --- horizontal rules between major sections.
 - Keep paragraphs short (2-3 sentences max).
 - When highlighting answers within text, **bold** the answer word.
 - Be transparent about the recency of your information.
 
-Always include a sources section at the end:
+CRITICAL: You MUST always include a sources section at the very end of your response in EXACTLY this format (one source per line):
 ---
 **Sources:**
-1. [Topic - Description](https://example.com)`;
+- [Title of the page or article](https://actual-url.com) — Brief one-line description of the source
+- [Another Source Title](https://another-url.com) — Brief description`;
 
 
       if (customInstructions) {
