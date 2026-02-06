@@ -2,106 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ChatGPT-inspired Design System */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Söhne:wght@400;500;600&display=swap');
+/* ChatGPT-style Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 @layer base {
   :root {
-    /* ChatGPT-style colors */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 13%;
+    /* ChatGPT dark theme as default */
+    --background: 0 0% 13%;
+    --foreground: 0 0% 93%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 13%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 93%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 13%;
+    --popover: 0 0% 11%;
+    --popover-foreground: 0 0% 93%;
 
-    --primary: 160 84% 39%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 93%;
+    --primary-foreground: 0 0% 9%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 13%;
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 0 0% 93%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 56%;
 
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 13%;
+    --accent: 0 0% 18%;
+    --accent-foreground: 0 0% 93%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 160 84% 39%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 56%;
 
     --radius: 0.75rem;
 
-    /* Sidebar - ChatGPT dark sidebar */
-    --sidebar-background: 0 0% 8%;
-    --sidebar-foreground: 0 0% 85%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 0 0% 8%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 160 84% 39%;
+    /* Sidebar */
+    --sidebar-background: 0 0% 9%;
+    --sidebar-foreground: 0 0% 70%;
+    --sidebar-primary: 0 0% 93%;
+    --sidebar-primary-foreground: 0 0% 9%;
+    --sidebar-accent: 0 0% 13%;
+    --sidebar-accent-foreground: 0 0% 93%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 0 0% 56%;
 
-    /* Chat-specific tokens */
-    --chat-user-bg: 0 0% 96%;
-    --chat-assistant-bg: 0 0% 100%;
-    --chat-hover: 0 0% 94%;
-    --thinking-bg: 45 100% 96%;
-    --thinking-border: 45 90% 70%;
-    --code-bg: 220 13% 18%;
-    --code-foreground: 0 0% 93%;
-  }
-
-  .dark {
-    --background: 220 13% 10%;
-    --foreground: 0 0% 93%;
-
-    --card: 220 13% 12%;
-    --card-foreground: 0 0% 93%;
-
-    --popover: 220 13% 12%;
-    --popover-foreground: 0 0% 93%;
-
-    --primary: 160 84% 45%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 220 13% 18%;
-    --secondary-foreground: 0 0% 93%;
-
-    --muted: 220 13% 18%;
-    --muted-foreground: 0 0% 60%;
-
-    --accent: 220 13% 18%;
-    --accent-foreground: 0 0% 93%;
-
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 220 13% 20%;
-    --input: 220 13% 20%;
-    --ring: 160 84% 45%;
-
-    --sidebar-background: 220 13% 8%;
-    --sidebar-foreground: 0 0% 85%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 220 13% 8%;
-    --sidebar-accent: 220 13% 15%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 220 13% 18%;
-    --sidebar-ring: 160 84% 45%;
-
-    --chat-user-bg: 220 13% 15%;
-    --chat-assistant-bg: 220 13% 10%;
-    --chat-hover: 220 13% 14%;
-    --thinking-bg: 45 30% 15%;
-    --thinking-border: 45 50% 40%;
-    --code-bg: 220 13% 8%;
+    /* Chat-specific */
+    --chat-user-bg: 0 0% 18%;
+    --chat-assistant-bg: 0 0% 13%;
+    --chat-hover: 0 0% 16%;
+    --thinking-bg: 0 0% 15%;
+    --thinking-border: 0 0% 26%;
+    --code-bg: 0 0% 12%;
     --code-foreground: 0 0% 93%;
   }
 }
@@ -111,12 +64,16 @@
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Söhne', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  html {
+    color-scheme: dark;
   }
 
-  /* Custom scrollbar */
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  }
+
+  /* Custom scrollbar - ChatGPT style */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -127,17 +84,17 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / 0.3);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.5);
+    background: rgba(255, 255, 255, 0.25);
   }
 }
 
 @layer components {
-  /* Chat message animations */
+  /* Message animations */
   .message-appear {
     animation: messageAppear 0.3s ease-out forwards;
   }
@@ -153,7 +110,20 @@
     }
   }
 
-  /* Thinking animation */
+  /* Streaming cursor */
+  .streaming-cursor::after {
+    content: '▊';
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+    opacity: 0.7;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 0.7; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* Thinking dots animation */
   .thinking-dots {
     display: inline-flex;
     gap: 4px;
@@ -163,21 +133,13 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: hsl(var(--muted-foreground));
+    background: #8e8e8e;
     animation: thinkingBounce 1.4s infinite ease-in-out;
   }
 
-  .thinking-dots span:nth-child(1) {
-    animation-delay: 0s;
-  }
-
-  .thinking-dots span:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-
-  .thinking-dots span:nth-child(3) {
-    animation-delay: 0.4s;
-  }
+  .thinking-dots span:nth-child(1) { animation-delay: 0s; }
+  .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
 
   @keyframes thinkingBounce {
     0%, 80%, 100% {
@@ -188,47 +150,5 @@
       transform: scale(1);
       opacity: 1;
     }
-  }
-
-  /* Streaming cursor */
-  .streaming-cursor::after {
-    content: '▊';
-    animation: blink 1s step-end infinite;
-    margin-left: 2px;
-    color: hsl(var(--muted-foreground));
-  }
-
-  @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-  }
-
-  /* Code block styling */
-  .prose pre {
-    background: hsl(var(--code-bg)) !important;
-    color: hsl(var(--code-foreground)) !important;
-    border-radius: var(--radius);
-    padding: 1rem;
-    overflow-x: auto;
-  }
-
-  .prose code {
-    background: hsl(var(--code-bg));
-    color: hsl(var(--code-foreground));
-    padding: 0.2em 0.4em;
-    border-radius: 4px;
-    font-size: 0.875em;
-  }
-
-  .prose pre code {
-    background: transparent;
-    padding: 0;
-  }
-
-  /* File attachment badge */
-  .file-badge {
-    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm;
-    background: hsl(var(--secondary));
-    border: 1px solid hsl(var(--border));
   }
 }
