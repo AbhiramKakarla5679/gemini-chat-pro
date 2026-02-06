@@ -32,15 +32,19 @@ const Landing = () => {
     navigate('/subjects');
   };
 
+  const handleOpenChat = () => {
+    navigate('/chat');
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden">
-      {/* Chat Button */}
+      {/* Chat Button - goes directly to AI chat */}
       <button
-        onClick={handleStartLearning}
-        className="fixed top-5 right-5 z-50 flex items-center gap-2 px-4 py-2.5 rounded-2xl glass-button text-muted-foreground hover:text-foreground transition-all duration-300"
+        onClick={handleOpenChat}
+        className="fixed top-4 right-4 z-50 flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-button text-muted-foreground hover:text-foreground transition-all duration-300"
       >
-        <MessageSquare className="w-4 h-4" />
-        <span className="text-sm font-rounded font-bold">Chat</span>
+        <MessageSquare className="w-3.5 h-3.5" />
+        <span className="text-xs font-rounded font-bold">Chat</span>
       </button>
 
       {/* Hero */}

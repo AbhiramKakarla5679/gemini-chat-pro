@@ -127,13 +127,13 @@ const Subjects = () => {
               <p className="text-xs text-muted-foreground font-rounded">Choose a subject to begin</p>
             </div>
           </div>
-          <Button
+          <button
             onClick={handleStartChat}
-            className="px-5 h-9 rounded-xl bg-accent hover:bg-accent/90 text-accent-foreground font-rounded font-bold text-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-button text-muted-foreground hover:text-foreground transition-all duration-300"
           >
-            <Brain className="w-4 h-4 mr-2" />
-            Free Chat
-          </Button>
+            <Brain className="w-3.5 h-3.5" />
+            <span className="text-xs font-rounded font-bold">Chat</span>
+          </button>
         </div>
       </header>
 
