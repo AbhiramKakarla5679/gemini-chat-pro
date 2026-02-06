@@ -218,7 +218,7 @@ export function ChatInput({
   const currentModelInfo = AVAILABLE_MODELS.find(m => m.id === currentModel) || AVAILABLE_MODELS[0];
 
   return (
-    <div className="p-4 pb-6">
+    <div className="p-4 pb-2 mb-4 sm:mb-2">
       <div className="max-w-3xl mx-auto">
         {/* Context input (collapsible) */}
         {showContext && (
