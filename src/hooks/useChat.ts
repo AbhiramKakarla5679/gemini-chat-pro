@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Message, Conversation, FileAttachment } from '@/types/chat';
+import { Message, Conversation, FileAttachment, DEFAULT_MODEL } from '@/types/chat';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import type { Json } from '@/integrations/supabase/types';
@@ -126,7 +126,7 @@ export function useChat() {
     }
   }, [user, loadConversations]);
 
-  const createNewConversation = useCallback(async (model: string = 'google/gemini-3-pro-preview') => {
+  const createNewConversation = useCallback(async (model: string = DEFAULT_MODEL) => {
     if (!user) {
       console.error('Cannot create conversation: no user');
       return null;
