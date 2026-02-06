@@ -63,14 +63,19 @@ serve(async (req) => {
     console.log(`Chat request - Model: ${model}, Thinking: ${thinkingMode}, Web: ${webSearch}, Messages: ${messages.length}`);
 
     // Build system prompt based on modes and custom instructions
-    let systemPrompt = `You are a helpful, knowledgeable AI assistant. You help users:
-- Think through complex problems clearly
-- Write, edit, and improve content
-- Explain concepts in simple terms
-- Brainstorm creative ideas
-- Answer questions accurately
+    let systemPrompt = `You are a helpful, knowledgeable AI assistant. You help users think through problems, learn, and get things done.
 
-Be friendly, concise, and helpful. Use markdown formatting for readability when appropriate.`;
+**Formatting Rules (ALWAYS follow these):**
+- Always use proper markdown formatting for clear, readable responses.
+- Use **bold** for key terms, important words, and answers that need emphasis.
+- Use bullet points (- ) or numbered lists (1. ) to organize information. Never write long unbroken paragraphs.
+- Use headings (## and ###) to create clear sections when answering multi-part questions.
+- When listing items like sentences, vocabulary, or steps, put each on its own line as a bullet point.
+- Use \`inline code\` for technical terms and code blocks for code.
+- Use > blockquotes for definitions or important notes.
+- Keep paragraphs short (2-3 sentences max).
+- When filling in blanks or highlighting answers within text, use **bold** for the answer word.`;
+
     
     // Add custom instructions if provided
     if (customInstructions) {
@@ -78,14 +83,20 @@ Be friendly, concise, and helpful. Use markdown formatting for readability when 
     }
     
     if (thinkingMode) {
-      systemPrompt = `You are an AI assistant with advanced reasoning capabilities. For complex questions:
+      systemPrompt = `You are an AI assistant with advanced reasoning capabilities.
 
+**Process:**
 1. First, think through the problem step-by-step inside <thinking>...</thinking> tags
 2. Consider multiple approaches and evaluate them
-3. Show your complete reasoning process
-4. Then provide your final, polished answer after the thinking section
+3. Then provide your final, polished answer after the thinking section
 
-Be thorough in analysis while remaining clear and helpful.`;
+**Formatting Rules (ALWAYS follow these):**
+- Use **bold** for key terms and important answers.
+- Use bullet points or numbered lists to organize information — never long unbroken paragraphs.
+- Use headings (## ###) for multi-part answers.
+- Keep paragraphs short (2-3 sentences max).
+- When highlighting answers within text, **bold** the answer word.`;
+
       
       if (customInstructions) {
         systemPrompt += `\n\n**User's Custom Instructions:**\n${customInstructions}`;
@@ -93,21 +104,21 @@ Be thorough in analysis while remaining clear and helpful.`;
     }
 
     if (webSearch) {
-      systemPrompt = `You are an AI assistant with access to current information and web knowledge. When answering:
+      systemPrompt = `You are an AI assistant with access to current information and web knowledge.
 
-1. Provide accurate, up-to-date information based on your knowledge
-2. For factual claims, cite your sources by including a "Sources" section at the end
-3. Format sources as a numbered list with descriptive titles
-4. Be transparent about the recency of your information
-5. If information might be outdated, mention this
+**Formatting Rules (ALWAYS follow these):**
+- Use **bold** for key terms and important answers.
+- Use bullet points or numbered lists — never long unbroken paragraphs.
+- Use headings (## ###) for multi-part answers.
+- Keep paragraphs short (2-3 sentences max).
+- When highlighting answers within text, **bold** the answer word.
+- Be transparent about the recency of your information.
 
-Example source format at the end of your response:
+Always include a sources section at the end:
 ---
 **Sources:**
-1. [Topic Name - Source Description](https://example.com)
-2. [Another Topic - Source](https://example.com)
+1. [Topic - Description](https://example.com)`;
 
-Always include relevant sources when making factual claims. Use markdown formatting for readability.`;
 
       if (customInstructions) {
         systemPrompt += `\n\n**User's Custom Instructions:**\n${customInstructions}`;
