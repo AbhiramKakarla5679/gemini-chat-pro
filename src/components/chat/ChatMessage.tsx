@@ -1,6 +1,20 @@
 import { useState } from 'react';
 import { Message } from '@/types/chat';
-import { Bot, User, Copy, Check, ChevronDown, ChevronUp, FileText, Image as ImageIcon } from 'lucide-react';
+import { 
+  Copy, 
+  Check, 
+  ChevronDown, 
+  ChevronUp, 
+  FileText, 
+  Image as ImageIcon,
+  ThumbsUp,
+  ThumbsDown,
+  RotateCcw,
+  Volume2,
+  Share,
+  MoreHorizontal,
+  Sparkles
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
@@ -12,7 +26,7 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message, isLatest }: ChatMessageProps) {
   const [copied, setCopied] = useState(false);
-  const [showThinking, setShowThinking] = useState(false);
+  const [showThinking, setShowThinking] = useState(true);
 
   const isUser = message.role === 'user';
 
@@ -29,59 +43,62 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  return (
-    <div className={cn(
-      "py-6 px-4 -mx-4 rounded-xl message-appear",
-      isUser ? "bg-chat-user" : "bg-chat-assistant"
-    )}>
-      <div className="flex gap-4">
-        {/* Avatar */}
-        <div className={cn(
-          "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
-          isUser ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
-        )}>
-          {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0 space-y-3">
-          {/* Role label */}
-          <div className="font-medium text-sm">
-            {isUser ? 'You' : 'Assistant'}
-          </div>
-
-          {/* File attachments for user messages */}
-          {isUser && message.attachments && message.attachments.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-2">
+  if (isUser) {
+    return (
+      <div className="flex justify-end mb-6">
+        <div className="max-w-[85%]">
+          {/* File attachments */}
+          {message.attachments && message.attachments.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-2 justify-end">
               {message.attachments.map((attachment) => (
-                <div key={attachment.id} className="file-badge">
+                <div key={attachment.id} className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-[#2f2f2f] text-sm text-[#ececec]">
                   {attachment.type.startsWith('image/') ? (
-                    <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                    <ImageIcon className="w-4 h-4 text-[#8e8e8e]" />
                   ) : (
-                    <FileText className="w-4 h-4 text-muted-foreground" />
+                    <FileText className="w-4 h-4 text-[#8e8e8e]" />
                   )}
                   <span className="truncate max-w-[200px]">{attachment.name}</span>
                 </div>
               ))}
             </div>
           )}
+          
+          {/* User message bubble */}
+          <div className="px-5 py-3 rounded-3xl bg-[#2f2f2f] text-[#ececec]">
+            <p className="whitespace-pre-wrap">{message.content}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
+  // Assistant message
+  return (
+    <div className="mb-6 message-appear">
+      <div className="flex gap-4">
+        {/* Avatar */}
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#ab68ff] via-[#ff7eb3] to-[#ff9f68] flex items-center justify-center shrink-0">
+          <Sparkles className="w-4 h-4 text-white" />
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
           {/* Thinking section */}
           {thinkingContent && (
             <div className="mb-4">
               <button
                 onClick={() => setShowThinking(!showThinking)}
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center gap-2 text-sm text-[#8e8e8e] hover:text-[#ececec] transition-colors mb-2"
               >
                 {showThinking ? (
                   <ChevronUp className="w-4 h-4" />
                 ) : (
                   <ChevronDown className="w-4 h-4" />
                 )}
-                <span>Thinking process</span>
+                <span className="font-medium">Thought for a moment</span>
               </button>
-          {showThinking && (
-                <div className="mt-2 p-4 rounded-lg bg-thinking-bg border border-thinking-border text-sm prose prose-sm max-w-none dark:prose-invert">
+              {showThinking && (
+                <div className="pl-4 border-l-2 border-[#424242] text-[#b4b4b4] text-sm space-y-2">
                   <ReactMarkdown>
                     {thinkingContent}
                   </ReactMarkdown>
@@ -92,14 +109,23 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
 
           {/* Main content */}
           <div className={cn(
-            "prose prose-sm max-w-none dark:prose-invert [&_pre]:bg-code-bg [&_code]:bg-code-bg [&_code]:text-code-foreground",
+            "prose prose-invert prose-sm max-w-none",
+            "[&_p]:text-[#ececec] [&_p]:leading-relaxed",
+            "[&_code]:bg-[#1e1e1e] [&_code]:text-[#e06c75] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded",
+            "[&_pre]:bg-[#1e1e1e] [&_pre]:rounded-xl [&_pre]:p-4",
+            "[&_pre_code]:bg-transparent [&_pre_code]:p-0",
+            "[&_ul]:text-[#ececec] [&_ol]:text-[#ececec]",
+            "[&_li]:text-[#ececec]",
+            "[&_strong]:text-[#ececec]",
+            "[&_h1]:text-[#ececec] [&_h2]:text-[#ececec] [&_h3]:text-[#ececec]",
+            "[&_a]:text-[#7ab7ff] [&_a]:no-underline hover:[&_a]:underline",
             message.isStreaming && isLatest && "streaming-cursor"
           )}>
             <ReactMarkdown
               components={{
                 code({ node, className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || '');
-                  const isInline = !match;
+                  const isInline = !match && !className;
                   
                   if (isInline) {
                     return (
@@ -110,20 +136,22 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
                   }
                   
                   return (
-                    <div className="relative group">
-                      <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 bg-code-bg/50 hover:bg-code-bg"
-                          onClick={() => {
-                            navigator.clipboard.writeText(String(children));
-                          }}
-                        >
-                          <Copy className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                      <pre className={className}>
+                    <div className="relative group my-4">
+                      {match && (
+                        <div className="flex items-center justify-between px-4 py-2 bg-[#2d2d2d] rounded-t-xl border-b border-[#424242]">
+                          <span className="text-xs text-[#8e8e8e]">{match[1]}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-xs text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#424242]"
+                            onClick={() => navigator.clipboard.writeText(String(children))}
+                          >
+                            <Copy className="h-3.5 w-3.5 mr-1" />
+                            Copy
+                          </Button>
+                        </div>
+                      )}
+                      <pre className={cn(className, match && "!rounded-t-none !mt-0")}>
                         <code {...props}>{children}</code>
                       </pre>
                     </div>
@@ -135,20 +163,55 @@ export function ChatMessage({ message, isLatest }: ChatMessageProps) {
             </ReactMarkdown>
           </div>
 
-          {/* Actions */}
-          {!isUser && !message.isStreaming && (
-            <div className="flex items-center gap-1 mt-2">
+          {/* Actions toolbar */}
+          {!message.isStreaming && (
+            <div className="flex items-center gap-0.5 mt-3">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
                 onClick={handleCopy}
               >
                 {copied ? (
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="h-4 w-4" />
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+              >
+                <Volume2 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+              >
+                <ThumbsUp className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+              >
+                <ThumbsDown className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-lg text-[#8e8e8e] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+              >
+                <MoreHorizontal className="h-4 w-4" />
               </Button>
             </div>
           )}

@@ -6,6 +6,8 @@ import { useChat } from '@/hooks/useChat';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
+import { Menu } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -32,7 +34,7 @@ const Index = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-[#212121]">
       <Sidebar
         conversations={conversations}
         currentConversationId={currentConversation?.id}
@@ -44,7 +46,21 @@ const Index = () => {
       />
 
       {/* Main chat area */}
-      <main className="flex-1 flex flex-col min-w-0">
+      <main className="flex-1 flex flex-col min-w-0 bg-[#212121]">
+        {/* Header when sidebar is closed */}
+        {!sidebarOpen && (
+          <div className="flex items-center gap-2 p-2 md:p-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSidebarOpen(true)}
+              className="h-10 w-10 rounded-lg text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#2f2f2f]"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </div>
+        )}
+
         <MessageList
           messages={currentConversation?.messages || []}
           isLoading={isLoading}
@@ -58,7 +74,16 @@ const Index = () => {
         />
       </main>
 
-      <Toaster position="top-center" />
+      <Toaster 
+        position="top-center" 
+        toastOptions={{
+          style: {
+            background: '#2f2f2f',
+            color: '#ececec',
+            border: '1px solid #424242',
+          },
+        }}
+      />
     </div>
   );
 };

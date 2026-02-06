@@ -1,15 +1,16 @@
 import { useState, useRef, useCallback } from 'react';
-import { Send, Paperclip, X, Lightbulb, LightbulbOff, ChevronDown } from 'lucide-react';
+import { 
+  Send, 
+  Paperclip, 
+  X, 
+  Globe, 
+  Code2, 
+  SlidersHorizontal,
+  Plus,
+  Atom,
+  Square
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from '@/components/ui/dropdown-menu';
 import { FileAttachment, AVAILABLE_MODELS } from '@/types/chat';
 import { cn } from '@/lib/utils';
 
@@ -20,10 +21,13 @@ interface ChatInputProps {
   onModelChange: (model: string) => void;
 }
 
+type ChatMode = 'research' | 'code' | null;
+
 export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: ChatInputProps) {
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
-  const [thinkingMode, setThinkingMode] = useState(false);
+  const [reasoningMode, setReasoningMode] = useState(false);
+  const [activeMode, setActiveMode] = useState<ChatMode>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -31,10 +35,10 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
     if (!input.trim() && attachments.length === 0) return;
     if (isLoading) return;
     
-    onSend(input, attachments, thinkingMode);
+    onSend(input, attachments, reasoningMode);
     setInput('');
     setAttachments([]);
-  }, [input, attachments, thinkingMode, isLoading, onSend]);
+  }, [input, attachments, reasoningMode, isLoading, onSend]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -50,7 +54,6 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
     const newAttachments: FileAttachment[] = [];
     
     for (const file of Array.from(files)) {
-      // Read file as base64 for images
       if (file.type.startsWith('image/')) {
         const base64 = await readFileAsBase64(file);
         newAttachments.push({
@@ -61,7 +64,6 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
           base64,
         });
       } else {
-        // For other files, just store metadata
         newAttachments.push({
           id: crypto.randomUUID(),
           name: file.name,
@@ -90,145 +92,183 @@ export function ChatInput({ onSend, isLoading, currentModel, onModelChange }: Ch
     setAttachments(prev => prev.filter(a => a.id !== id));
   };
 
-  const currentModelInfo = AVAILABLE_MODELS.find(m => m.id === currentModel) || AVAILABLE_MODELS[0];
+  const handleStop = () => {
+    // Would implement abort controller here
+  };
 
   return (
-    <div className="border-t bg-background p-4">
+    <div className="p-4 pb-6">
       <div className="max-w-3xl mx-auto">
-        {/* Attachments preview */}
-        {attachments.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
-            {attachments.map((attachment) => (
-              <div
-                key={attachment.id}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary text-sm"
-              >
-                <span className="truncate max-w-[150px]">{attachment.name}</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-5 w-5"
-                  onClick={() => removeAttachment(attachment.id)}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Input container */}
-        <div className="relative flex items-end gap-2 rounded-2xl border bg-secondary/30 p-2">
-          {/* File input */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept="image/*,.pdf,.txt,.md,.json,.csv"
-            className="hidden"
-            onChange={handleFileSelect}
-          />
+        {/* Main input container - ChatGPT dark style */}
+        <div className="relative rounded-3xl bg-[#2f2f2f] border border-[#424242] overflow-hidden">
           
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 shrink-0 text-muted-foreground hover:text-foreground"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isLoading}
-          >
-            <Paperclip className="h-5 w-5" />
-          </Button>
+          {/* Reasoning indicator when active */}
+          {isLoading && reasoningMode && (
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#424242]">
+              <div className="flex items-center gap-2 text-[#ececec]">
+                <Atom className="h-5 w-5 animate-pulse" />
+                <span className="text-sm font-medium">Reasoning...</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleStop}
+                className="h-7 px-3 text-xs bg-[#424242] hover:bg-[#525252] text-[#ececec] rounded-full"
+              >
+                Stop
+              </Button>
+            </div>
+          )}
 
-          {/* Textarea */}
-          <Textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Message..."
-            disabled={isLoading}
-            className="min-h-[44px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-2 py-2.5"
-            rows={1}
-          />
+          {/* Attachments preview */}
+          {attachments.length > 0 && (
+            <div className="flex flex-wrap gap-2 px-4 pt-3">
+              {attachments.map((attachment) => (
+                <div
+                  key={attachment.id}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#424242] text-sm text-[#ececec]"
+                >
+                  <span className="truncate max-w-[150px]">{attachment.name}</span>
+                  <button
+                    onClick={() => removeAttachment(attachment.id)}
+                    className="hover:text-white"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
 
-          {/* Actions */}
-          <div className="flex items-center gap-1">
-            {/* Thinking mode toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                "h-9 w-9 shrink-0",
-                thinkingMode 
-                  ? "text-primary bg-primary/10" 
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-              onClick={() => setThinkingMode(!thinkingMode)}
+          {/* Text input area */}
+          <div className="px-4 py-3">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
+                // Auto-resize
+                e.target.style.height = 'auto';
+                e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask anything"
               disabled={isLoading}
-              title={thinkingMode ? "Thinking mode enabled" : "Enable thinking mode"}
-            >
-              {thinkingMode ? (
-                <Lightbulb className="h-5 w-5" />
-              ) : (
-                <LightbulbOff className="h-5 w-5" />
-              )}
-            </Button>
+              className="w-full bg-transparent text-[#ececec] placeholder:text-[#8e8e8e] resize-none outline-none text-base leading-relaxed min-h-[24px] max-h-[200px]"
+              rows={1}
+            />
+          </div>
 
-            {/* Send button */}
+          {/* Bottom toolbar */}
+          <div className="flex items-center justify-between px-3 pb-3">
+            <div className="flex items-center gap-0.5">
+              {/* Plus/Attach button */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/*,.pdf,.txt,.md,.json,.csv,.js,.ts,.py,.html,.css"
+                className="hidden"
+                onChange={handleFileSelect}
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-full text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#424242]"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isLoading}
+              >
+                <Plus className="h-5 w-5" />
+              </Button>
+
+              {/* Search/Browse web */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-full text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#424242]"
+                disabled={isLoading}
+              >
+                <Globe className="h-5 w-5" />
+              </Button>
+
+              {/* Canvas/Code */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "h-9 w-9 rounded-full hover:bg-[#424242]",
+                  activeMode === 'code' ? "text-[#ececec] bg-[#424242]" : "text-[#b4b4b4] hover:text-[#ececec]"
+                )}
+                onClick={() => setActiveMode(activeMode === 'code' ? null : 'code')}
+                disabled={isLoading}
+              >
+                <Code2 className="h-5 w-5" />
+              </Button>
+
+              {/* Reasoning/Thinking toggle */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "h-9 w-9 rounded-full hover:bg-[#424242]",
+                  reasoningMode ? "text-[#ececec] bg-[#424242]" : "text-[#b4b4b4] hover:text-[#ececec]"
+                )}
+                onClick={() => setReasoningMode(!reasoningMode)}
+                disabled={isLoading}
+                title="Toggle reasoning mode"
+              >
+                <SlidersHorizontal className="h-5 w-5" />
+              </Button>
+
+              {/* Active mode chips */}
+              {activeMode === 'research' && (
+                <div className="flex items-center gap-1.5 ml-2 px-3 py-1.5 rounded-full bg-[#424242] text-[#ececec] text-sm">
+                  <Atom className="h-4 w-4" />
+                  <span>Research</span>
+                  <button 
+                    onClick={() => setActiveMode(null)}
+                    className="ml-0.5 hover:text-white"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+
+              {reasoningMode && !isLoading && (
+                <div className="flex items-center gap-1.5 ml-2 px-3 py-1.5 rounded-full bg-[#424242] text-[#ececec] text-sm">
+                  <Atom className="h-4 w-4" />
+                  <span>Reasoning</span>
+                  <button 
+                    onClick={() => setReasoningMode(false)}
+                    className="ml-0.5 hover:text-white"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Send button with gradient */}
             <Button
               onClick={handleSubmit}
               disabled={isLoading || (!input.trim() && attachments.length === 0)}
               size="icon"
-              className="h-9 w-9 rounded-xl"
+              className={cn(
+                "h-9 w-9 rounded-full transition-all",
+                (input.trim() || attachments.length > 0) && !isLoading
+                  ? "bg-gradient-to-r from-[#ab68ff] via-[#ff7eb3] to-[#ff9f68] hover:opacity-90"
+                  : "bg-[#676767] text-[#b4b4b4]"
+              )}
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-4 w-4 text-white" />
             </Button>
           </div>
         </div>
 
-        {/* Model selector and info */}
-        <div className="flex items-center justify-between mt-3 px-1">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 gap-2 text-sm text-muted-foreground hover:text-foreground">
-                {currentModelInfo.name}
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[280px]">
-              <DropdownMenuLabel>Gemini Models</DropdownMenuLabel>
-              {AVAILABLE_MODELS.filter(m => m.category === 'gemini').map((model) => (
-                <DropdownMenuItem
-                  key={model.id}
-                  onClick={() => onModelChange(model.id)}
-                  className="flex flex-col items-start gap-0.5"
-                >
-                  <span className="font-medium">{model.name}</span>
-                  <span className="text-xs text-muted-foreground">{model.description}</span>
-                </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel>GPT Models</DropdownMenuLabel>
-              {AVAILABLE_MODELS.filter(m => m.category === 'gpt').map((model) => (
-                <DropdownMenuItem
-                  key={model.id}
-                  onClick={() => onModelChange(model.id)}
-                  className="flex flex-col items-start gap-0.5"
-                >
-                  <span className="font-medium">{model.name}</span>
-                  <span className="text-xs text-muted-foreground">{model.description}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {thinkingMode && (
-            <span className="text-xs text-primary flex items-center gap-1">
-              <Lightbulb className="h-3 w-3" />
-              Thinking mode
-            </span>
-          )}
-        </div>
+        {/* Model info text */}
+        <p className="text-center text-xs text-[#8e8e8e] mt-3">
+          ChatGPT can make mistakes. Check important info.
+        </p>
       </div>
     </div>
   );

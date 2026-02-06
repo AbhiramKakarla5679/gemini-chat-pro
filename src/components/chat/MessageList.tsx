@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { Message } from '@/types/chat';
 import { ChatMessage } from './ChatMessage';
-import { Bot } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 interface MessageListProps {
   messages: Message[];
@@ -18,14 +18,13 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center p-8">
-        <div className="text-center max-w-md animate-fade-in">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-            <Bot className="w-8 h-8 text-primary" />
+        <div className="text-center max-w-lg animate-fade-in">
+          <div className="w-12 h-12 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#ab68ff] via-[#ff7eb3] to-[#ff9f68] flex items-center justify-center">
+            <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <h2 className="text-2xl font-semibold mb-2">How can I help you today?</h2>
-          <p className="text-muted-foreground">
-            Start a conversation by typing a message below. I can help with coding, analysis, writing, and more.
-          </p>
+          <h1 className="text-2xl font-medium text-foreground mb-2">
+            What can I help with?
+          </h1>
         </div>
       </div>
     );
@@ -33,7 +32,7 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="max-w-3xl mx-auto py-8 px-4">
+      <div className="max-w-3xl mx-auto py-6 px-4">
         {messages.map((message, index) => (
           <ChatMessage 
             key={message.id} 
