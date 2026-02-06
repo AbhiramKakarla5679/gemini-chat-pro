@@ -218,7 +218,7 @@ export function ChatInput({
   const currentModelInfo = AVAILABLE_MODELS.find(m => m.id === currentModel) || AVAILABLE_MODELS[0];
 
   return (
-    <div className="p-4 pb-2 mb-4 sm:mb-2">
+    <div className="p-2 sm:p-4 pb-1 sm:pb-2 mb-3 sm:mb-2">
       <div className="max-w-3xl mx-auto">
         {/* Context input (collapsible) */}
         {showContext && (
@@ -343,7 +343,7 @@ export function ChatInput({
           )}
 
           {/* Text input area */}
-          <div className="px-4 py-4">
+          <div className="px-3 sm:px-4 py-3 sm:py-4">
             <textarea
               ref={textareaRef}
               value={input}
@@ -355,14 +355,14 @@ export function ChatInput({
               onKeyDown={handleKeyDown}
               placeholder="Ask anything..."
               disabled={isLoading}
-              className="w-full bg-transparent text-foreground placeholder:text-muted-foreground resize-none outline-none text-base leading-relaxed min-h-[24px] max-h-[200px] font-rounded font-bold"
+              className="w-full bg-transparent text-foreground placeholder:text-muted-foreground resize-none outline-none text-sm sm:text-base leading-relaxed min-h-[20px] sm:min-h-[24px] max-h-[200px] font-rounded font-bold"
               rows={1}
             />
           </div>
 
           {/* Bottom toolbar */}
-          <div className="flex items-center justify-between px-3 pb-4">
-            <div className="flex items-center gap-1">
+          <div className="flex items-center justify-between px-2 sm:px-3 pb-3 sm:pb-4">
+            <div className="flex items-center gap-0.5 sm:gap-1">
               {/* Attach files */}
               <input
                 ref={fileInputRef}
@@ -378,10 +378,10 @@ export function ChatInput({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 rounded-xl text-muted-foreground hover:text-foreground glass-button"
+                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl text-muted-foreground hover:text-foreground glass-button"
                     disabled={isLoading}
                   >
-                    <Paperclip className="h-5 w-5" />
+                    <Paperclip className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="glass-card border-white/10">
@@ -414,14 +414,14 @@ export function ChatInput({
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "h-9 w-9 rounded-xl glass-button",
+                  "h-8 w-8 sm:h-9 sm:w-9 rounded-xl glass-button",
                   (showContext || context.trim()) ? "text-accent" : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => setShowContext(!showContext)}
                 disabled={isLoading}
                 title="Add study context"
               >
-                <BookOpen className="h-5 w-5" />
+                <BookOpen className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
 
               {/* Web search */}
@@ -429,14 +429,14 @@ export function ChatInput({
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "h-9 w-9 rounded-xl glass-button",
+                  "h-8 w-8 sm:h-9 sm:w-9 rounded-xl glass-button",
                   webSearch ? "text-accent" : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => setWebSearch(!webSearch)}
                 disabled={isLoading}
                 title="Search the web"
               >
-                <Globe className="h-5 w-5" />
+                <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
 
               {/* Thinking mode */}
@@ -444,14 +444,14 @@ export function ChatInput({
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "h-9 w-9 rounded-xl glass-button",
+                  "h-8 w-8 sm:h-9 sm:w-9 rounded-xl glass-button",
                   thinkingMode ? "text-accent" : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => setThinkingMode(!thinkingMode)}
                 disabled={isLoading}
                 title="Enable deep thinking"
               >
-                <Lightbulb className="h-5 w-5" />
+                <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
 
               {/* Active mode chips */}
