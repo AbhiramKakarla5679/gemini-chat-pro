@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_usage: {
+        Row: {
+          cost_dollars: number
+          email: string
+          id: string
+          requests: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cost_dollars?: number
+          email: string
+          id?: string
+          requests?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cost_dollars?: number
+          email?: string
+          id?: string
+          requests?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
