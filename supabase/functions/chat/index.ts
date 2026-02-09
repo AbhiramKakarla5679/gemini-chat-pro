@@ -174,6 +174,51 @@ CRITICAL: You MUST always include a sources section at the very end of your resp
 
     console.log('Streaming response started');
 
+    // Track API usage asynchronously
+    if (authHeader) {
+      try {
+        const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+        const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+        const adminClient = createClient(supabaseUrl, serviceRoleKey);
+        
+        const anonClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
+          global: { headers: { Authorization: authHeader } }
+        });
+        const { data: { user: trackUser } } = await anonClient.auth.getUser();
+        
+        if (trackUser) {
+          // Estimate cost based on model
+          let costPerRequest = 0.0005; // default
+          if (model.includes('pro')) costPerRequest = 0.002;
+          else if (model.includes('flash') && !model.includes('lite')) costPerRequest = 0.001;
+          else if (model.includes('gpt-5') && !model.includes('nano') && !model.includes('mini')) costPerRequest = 0.003;
+          
+          const { data: existing } = await adminClient
+            .from('api_usage')
+            .select('id, requests, cost_dollars')
+            .eq('user_id', trackUser.id)
+            .maybeSingle();
+          
+          if (existing) {
+            await adminClient.from('api_usage').update({
+              requests: existing.requests + 1,
+              cost_dollars: Number(existing.cost_dollars) + costPerRequest,
+              updated_at: new Date().toISOString(),
+            }).eq('id', existing.id);
+          } else {
+            await adminClient.from('api_usage').insert({
+              user_id: trackUser.id,
+              email: trackUser.email || 'unknown',
+              requests: 1,
+              cost_dollars: costPerRequest,
+            });
+          }
+        }
+      } catch (trackErr) {
+        console.error('Error tracking usage:', trackErr);
+      }
+    }
+
     return new Response(response.body, {
       headers: {
         ...corsHeaders,

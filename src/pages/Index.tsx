@@ -62,9 +62,27 @@ const Index = () => {
     }
   }, [error]);
 
+  const [pendingModel, setPendingModel] = useState<string | null>(null);
+
   const handleNewChat = () => {
-    createNewConversation();
+    createNewConversation(pendingModel || DEFAULT_MODEL);
   };
+
+  const handleModelChange = (model: string) => {
+    if (currentConversation) {
+      updateModel(model);
+    } else {
+      setPendingModel(model);
+    }
+  };
+
+  // When a new conversation is created and we have a pending model, apply it
+  useEffect(() => {
+    if (currentConversation && pendingModel) {
+      updateModel(pendingModel);
+      setPendingModel(null);
+    }
+  }, [currentConversation, pendingModel, updateModel]);
 
   // Global drag and drop handlers
   const handleDragEnter = useCallback((e: DragEvent<HTMLDivElement>) => {
@@ -184,8 +202,8 @@ const Index = () => {
             sendMessage(content, attachments, thinkingMode, webSearch);
           }}
           isLoading={isLoading}
-          currentModel={currentConversation?.model || DEFAULT_MODEL}
-          onModelChange={updateModel}
+          currentModel={pendingModel || currentConversation?.model || DEFAULT_MODEL}
+          onModelChange={handleModelChange}
           droppedFiles={droppedFiles}
           onClearDroppedFiles={clearDroppedFiles}
         />

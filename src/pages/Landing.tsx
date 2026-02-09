@@ -1,6 +1,7 @@
 import { MessageSquare, BookOpen, Brain, Target, Zap, GraduationCap, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { Leaderboard } from '@/components/Leaderboard';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -38,6 +39,9 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden">
+      {/* Leaderboard */}
+      <Leaderboard />
+
       {/* Chat Button - goes directly to AI chat */}
       <button
         onClick={handleOpenChat}
