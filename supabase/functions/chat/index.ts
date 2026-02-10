@@ -85,26 +85,7 @@ serve(async (req) => {
     }
     
     if (thinkingMode) {
-      systemPrompt = `You are an AI assistant with advanced reasoning capabilities.
-
-**Process:**
-1. First, think through the problem step-by-step inside <thinking>...</thinking> tags
-2. Consider multiple approaches and evaluate them
-3. Then provide your final, polished answer after the thinking section
-
-**Formatting Rules (ALWAYS follow these):**
-- Use **bold** for key terms and important answers.
-- Use bullet points or numbered lists to organize information — never long unbroken paragraphs.
-- Use headings (## ###) for multi-part answers. Use relevant emojis in headings (e.g. "## 🧠 Analysis", "## ✅ Conclusion").
-- Use > blockquotes for key insights and important takeaways.
-- Add --- horizontal rules between major sections.
-- Keep paragraphs short (2-3 sentences max).
-- When highlighting answers within text, **bold** the answer word.`;
-
-      
-      if (customInstructions) {
-        systemPrompt += `\n\n**User's Custom Instructions:**\n${customInstructions}`;
-      }
+      systemPrompt += `\n\nWhen reasoning through complex problems, think step-by-step and show your analysis clearly using headings and numbered steps. Do NOT use <thinking> tags.`;
     }
 
     if (webSearch) {
