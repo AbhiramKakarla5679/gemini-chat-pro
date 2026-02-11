@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, X, Save, Loader2, Brain, Sparkles } from 'lucide-react';
+import { Settings, X, Save, Loader2, Brain, Sparkles, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -89,6 +89,33 @@ export function SettingsModal() {
               <p className="text-xs text-muted-foreground font-rounded text-right">
                 {instructions.length} / 2000 characters
               </p>
+            </div>
+
+            {/* Dark Mode Toggle */}
+            <div className="flex items-center justify-between p-4 rounded-xl bg-background/30 border border-white/5">
+              <div className="flex items-center gap-2">
+                <Sun className="h-4 w-4 text-accent" />
+                <div className="space-y-1">
+                  <label className="text-sm font-rounded font-semibold">
+                    Dark Mode
+                  </label>
+                  <p className="text-xs text-muted-foreground font-rounded">
+                    Switch between light and dark theme
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={document.documentElement.classList.contains('dark')}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                  }
+                }}
+              />
             </div>
 
             {/* Memory Toggle */}
