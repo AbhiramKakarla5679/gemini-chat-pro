@@ -1,4 +1,4 @@
-import { BookOpen, Brain, Target, Zap, GraduationCap, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import { BookOpen, Brain, Target, Zap, GraduationCap, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -63,15 +63,6 @@ const Landing = () => {
         <div className="absolute top-40 right-1/4 w-80 h-80 bg-blue-500/8 rounded-full blur-3xl pointer-events-none" />
         
         <div className="text-center max-w-3xl mx-auto relative z-10">
-          {/* Badge */}
-          <div 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-accent/20 bg-accent/5 mb-8 opacity-0 animate-fade-up"
-            style={{ animationDelay: '0ms' }}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-accent" />
-            <span className="text-xs font-semibold tracking-wide text-accent">AI-Powered Learning</span>
-          </div>
-
           {/* Title */}
           <h1 
             className="text-5xl md:text-7xl font-black tracking-tight mb-6 opacity-0 animate-fade-up leading-[1.1]"
@@ -86,7 +77,7 @@ const Landing = () => {
             className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed opacity-0 animate-fade-up"
             style={{ animationDelay: '160ms' }}
           >
-            Your personal AI tutor that adapts to how you learn. Notes, revision, and practice — all in one place.
+            Your personal tutor that adapts to how you learn. Notes, revision, and practice — all in one place.
           </p>
 
           {/* CTA */}
@@ -101,14 +92,6 @@ const Landing = () => {
             >
               Start Learning Free
               <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => navigate('/chat')}
-              className="px-8 h-13 text-base font-bold rounded-2xl border-border hover:bg-secondary transition-all duration-300"
-            >
-              Try AI Chat
             </Button>
           </div>
 
