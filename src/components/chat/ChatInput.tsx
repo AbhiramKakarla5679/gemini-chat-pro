@@ -257,7 +257,7 @@ export function ChatInput({
 
           {/* Loading indicator */}
           {isLoading && (thinkingMode || webSearch) && (
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border/20">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span className="text-sm font-rounded font-bold">
@@ -368,7 +368,7 @@ export function ChatInput({
                     <Paperclip className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="glass-card border-white/10">
+                <DropdownMenuContent align="start" className="glass-card border-border/50">
                   <DropdownMenuItem 
                     onClick={() => fileInputRef.current?.click()}
                     className="cursor-pointer font-rounded font-bold"
@@ -498,7 +498,7 @@ export function ChatInput({
                 {currentModelInfo.name}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="glass-card border-white/10 min-w-[260px] rounded-2xl p-2">
+            <DropdownMenuContent align="center" className="glass-card border-border/50 min-w-[260px] rounded-2xl p-2">
               {AVAILABLE_MODELS.map((model) => (
                 <DropdownMenuItem
                   key={model.id}

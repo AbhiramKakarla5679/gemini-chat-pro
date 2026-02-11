@@ -211,14 +211,6 @@ const Index = () => {
 
       <Toaster 
         position="top-center" 
-        toastOptions={{
-          style: {
-            background: 'hsl(220 15% 10%)',
-            color: 'hsl(0 0% 98%)',
-            border: '1px solid hsl(0 0% 100% / 0.08)',
-            backdropFilter: 'blur(12px)',
-          },
-        }}
       />
     </div>
   );
