@@ -55,7 +55,7 @@ export function SettingsModal() {
           <Settings className="h-5 w-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="glass-card border-white/10 max-w-lg">
+      <DialogContent className="glass-card border-border/50 max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-rounded text-lg">
             <Sparkles className="h-5 w-5 text-accent" />
@@ -84,7 +84,7 @@ export function SettingsModal() {
                 value={instructions}
                 onChange={(e) => setInstructions(e.target.value)}
                 placeholder="e.g., Always respond in a formal tone. Explain concepts as if I'm a beginner. Use bullet points for lists..."
-                className="w-full h-32 bg-background/50 border border-white/10 rounded-xl p-3 text-sm font-rounded resize-none outline-none focus:border-accent/50 transition-colors placeholder:text-muted-foreground/60"
+                className="w-full h-32 bg-background/50 border border-border rounded-xl p-3 text-sm font-rounded resize-none outline-none focus:border-accent/50 transition-colors placeholder:text-muted-foreground/60"
               />
               <p className="text-xs text-muted-foreground font-rounded text-right">
                 {instructions.length} / 2000 characters
@@ -92,7 +92,7 @@ export function SettingsModal() {
             </div>
 
             {/* Dark Mode Toggle */}
-            <div className="flex items-center justify-between p-4 rounded-xl bg-background/30 border border-white/5">
+            <div className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border border-border/50">
               <div className="flex items-center gap-2">
                 <Sun className="h-4 w-4 text-accent" />
                 <div className="space-y-1">
@@ -119,7 +119,7 @@ export function SettingsModal() {
             </div>
 
             {/* Memory Toggle */}
-            <div className="flex items-center justify-between p-4 rounded-xl bg-background/30 border border-white/5">
+            <div className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border border-border/50">
               <div className="space-y-1">
                 <label className="text-sm font-rounded font-semibold">
                   Conversation Memory

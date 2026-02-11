@@ -109,7 +109,7 @@ export function ChatMessage({ message, isLatest, thinkingMode, webSearch }: Chat
             return (
               <>
                 <div className={cn(
-                  "prose prose-invert max-w-none font-rounded",
+                  "prose dark:prose-invert max-w-none font-rounded",
                   // Paragraphs
                   "[&_p]:text-foreground [&_p]:leading-[1.75] [&_p]:mb-4 [&_p]:text-[15px] [&_p]:font-medium",
                   // Inline code
@@ -144,15 +144,23 @@ export function ChatMessage({ message, isLatest, thinkingMode, webSearch }: Chat
                   // Horizontal rules - styled dividers
                   "[&_hr]:border-none [&_hr]:h-px [&_hr]:my-6 [&_hr]:bg-gradient-to-r [&_hr]:from-transparent [&_hr]:via-border [&_hr]:to-transparent",
                   // Tables - well-formatted with alternating rows
-                  "[&_table]:w-full [&_table]:my-5 [&_table]:glass-card [&_table]:rounded-xl [&_table]:overflow-hidden [&_table]:border [&_table]:border-border/30",
+                  "[&_table]:w-full [&_table]:my-5 [&_table]:rounded-xl [&_table]:overflow-hidden [&_table]:border [&_table]:border-border",
+                  "[&_table]:border-collapse [&_table]:table-auto",
                   "[&_thead]:bg-accent/10",
-                  "[&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:text-xs [&_th]:font-extrabold [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-accent [&_th]:border-b [&_th]:border-border/40",
-                  "[&_td]:px-4 [&_td]:py-3 [&_td]:text-sm [&_td]:font-medium [&_td]:border-b [&_td]:border-border/15",
-                  "[&_tr:nth-child(even)]:bg-accent/5 [&_tr:hover]:bg-accent/10 [&_tr]:transition-colors",
+                  "[&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:text-xs [&_th]:font-extrabold [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-accent [&_th]:border-b-2 [&_th]:border-border [&_th]:bg-accent/10",
+                  "[&_td]:px-4 [&_td]:py-3 [&_td]:text-sm [&_td]:font-medium [&_td]:border-b [&_td]:border-border/50 [&_td]:text-foreground",
+                  "[&_tbody_tr:nth-child(even)]:bg-muted/50 [&_tbody_tr:hover]:bg-accent/10 [&_tr]:transition-colors",
                   message.isStreaming && isLatest && "streaming-cursor"
                 )}>
                   <ReactMarkdown
                     components={{
+                      table({ children }) {
+                        return (
+                          <div className="overflow-x-auto my-5 rounded-xl border border-border">
+                            <table className="w-full border-collapse">{children}</table>
+                          </div>
+                        );
+                      },
                       code({ node, className, children, ...props }) {
                         const match = /language-(\w+)/.exec(className || '');
                         const isInline = !match && !className;
