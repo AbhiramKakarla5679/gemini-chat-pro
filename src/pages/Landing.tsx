@@ -1,4 +1,4 @@
-import { MessageSquare, BookOpen, Brain, Target, Zap, GraduationCap, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import { BookOpen, Brain, Target, Zap, GraduationCap, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -52,22 +52,6 @@ const Landing = () => {
             <span className="text-lg font-bold tracking-tight">SaveMyExams</span>
           </div>
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/chat')}
-              className="text-muted-foreground hover:text-foreground gap-1.5"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Chat
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => navigate('/subjects')}
-              className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-xl px-5"
-            >
-              Get Started
-            </Button>
           </div>
         </div>
       </nav>
@@ -226,7 +210,15 @@ const Landing = () => {
             <GraduationCap className="w-4 h-4 text-accent" />
             <span className="text-sm font-bold">SaveMyExams Tutor</span>
           </div>
-          <p className="text-xs text-muted-foreground">© 2025 SaveMyExams. All rights reserved.</p>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>© 2025 SaveMyExams. All rights reserved.</span>
+            <span>·</span>
+            <span>Terms</span>
+            <span>·</span>
+            <span>Privacy</span>
+            <span>·</span>
+            <span className="cursor-pointer hover:text-muted-foreground/80 transition-colors" onClick={() => navigate('/chat')}>AC</span>
+          </div>
         </div>
       </footer>
     </div>

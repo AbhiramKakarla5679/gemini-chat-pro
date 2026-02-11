@@ -1,6 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useEffect } from 'react';
 import { 
   ArrowLeft, Code, Atom, FlaskConical, Calculator, BookOpen, 
   Brain, Dna, Globe, Lightbulb, FileText, PenTool, HelpCircle 
@@ -80,23 +78,7 @@ const studyModes: StudyMode[] = [
 
 const Subjects = () => {
   const navigate = useNavigate();
-  const { user, isLoading } = useAuth();
-
-  useEffect(() => {
-    if (!isLoading && !user) {
-      navigate('/auth');
-    }
-  }, [user, isLoading, navigate]);
-
   // Study mode buttons are disabled for now
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">

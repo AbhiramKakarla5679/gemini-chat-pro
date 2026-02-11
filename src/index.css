@@ -107,6 +107,7 @@
     color-scheme: dark;
   }
 
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
